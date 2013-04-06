@@ -8,12 +8,17 @@ html, body {
     overflow:auto;
 }
 
-ul li {
+ul.items li {
     padding:5px 10px;
-    border-bottom:1px solid #ccc;
+    border-top:1px solid #ccc;
+    transition:background 50ms linear;
 }
 
-li.title:hover {
+ul.items li:hover {
     background:#eee;
     cursor:pointer;
+}
+
+ul.items li.active {
+    background-color:#eec;
 }

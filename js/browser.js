@@ -1,6 +1,6 @@
 d3.json('index.json', function(err, index) {
 
-    d3.select('#titles')
+    var titles = d3.select('#titles')
         .selectAll('li.title')
         .data(index.titles)
         .enter()
@@ -9,7 +9,17 @@ d3.json('index.json', function(err, index) {
         .text(function(d) {
             return d[0] + ': ' + d[1];
         })
-        .on('click', sectionsFor);
+        .on('click', clickTitle);
+
+    function clickTitle(d) {
+        var t = this;
+        titles
+            .classed('active', function(d) {
+                return this == t;
+            });
+
+        sectionsFor(d);
+    }
 
     function sectionsFor(title) {
         var sections = d3.select('#sections')
@@ -29,8 +39,7 @@ d3.json('index.json', function(err, index) {
             .append('li')
             .attr('class', 'section')
             .text(function(d) {
-                return d.join('');
+                return d[0] + ' ' + d[1];
             });
     }
-
 });
