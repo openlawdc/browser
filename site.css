@@ -1,0 +1,19 @@
+html, body {
+    height:100%;
+}
+
+.nav {
+    border-right:1px solid #ccc;
+    height:100%;
+    overflow:auto;
+}
+
+ul li {
+    padding:5px 10px;
+    border-bottom:1px solid #ccc;
+}
+
+li.title:hover {
+    background:#eee;
+    cursor:pointer;
+}
