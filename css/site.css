@@ -98,6 +98,14 @@ section {
     padding:10px 5px;
 }
 
+section.section-2 {
+    margin-left:10px;
+}
+
+section.section-3 {
+    margin-left:20px;
+}
+
 section .section-prefix {
     display:inline-block;
     margin-right:5px;

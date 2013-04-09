@@ -69,7 +69,15 @@ d3.json('index.json', function(err, index) {
                     return d.prefix + d.text;
                 });
 
-            var sectionelem = sections.enter().append('section');
+            var sectionelem = sections.enter()
+                .append('section')
+                .attr('class', function(d) {
+                    var c = '';
+                    if (d.prefix.match(/([a-z])/)) c = 'section-1';
+                    else if (d.prefix.match(/([0-9])/)) c = 'section-2';
+                    else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
+                    return c;
+                });
             sections.exit().remove();
 
             var section_p = sectionelem.append('p');
