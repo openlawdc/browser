@@ -23,9 +23,7 @@ d3.json('index.json', function(err, index) {
 
     function clickTitle(d) {
         var t = this;
-        titles
-            .classed('active', function(d) { return this == t; });
-
+        titles.classed('active', function(d) { return this == t; });
         sectionsFor(d);
     }
 
@@ -119,12 +117,15 @@ d3.json('index.json', function(err, index) {
         });
     }
 
+    function doesNotApply(d) {
+        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
+    }
+
     function sectionsFor(title) {
 
         function clickSection(d) {
             var t = this;
             sections.classed('active', function(d) { return this == t; });
-
             doSection(d);
         }
 
@@ -143,9 +144,7 @@ d3.json('index.json', function(err, index) {
             .enter()
             .append('li')
             .attr('class', 'section')
-            .classed('repealed', function(d) {
-                return d[1].match(/\[Repealed\]/g);
-            })
+            .classed('repealed', doesNotApply)
             .on('click', clickSection);
 
         li.append('span')
@@ -155,5 +154,8 @@ d3.json('index.json', function(err, index) {
         li.append('span')
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
+
+        d3.select('.sections-container')
+            .property('scrollTop', 0);
     }
 });

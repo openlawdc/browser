@@ -10,3 +10,5 @@ to the task. There's no server, but there's a multitude of files. The
 initial target for deployment is [Amazon S3](http://aws.amazon.com/s3/). The
 site is deployed with [s3cmd](http://s3tools.org/) and takes about 16,000
 `PUT` requests to go live.
+
+CloudFront dist: http://d1eu6ip9xyd6yj.cloudfront.net/
