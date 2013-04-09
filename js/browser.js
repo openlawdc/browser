@@ -30,7 +30,9 @@ d3.json('index.json', function(err, index) {
     }
 
     function doSection(d) {
+        d3.select('#section').classed('loading', true);
         d3.json('sections/' + d[0] + '.json', function(err, section) {
+            d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
 
             var content = s.selectAll('div.content')
@@ -50,8 +52,14 @@ d3.json('index.json', function(err, index) {
 
             div.append('div')
                 .attr('class', 'pad1')
+                .selectAll('p')
+                .data(function(d) {
+                    return section.text.split(/\n+/);
+                })
+                .enter()
+                .append('p')
                 .text(function(d) {
-                    return d.text;
+                    return d;
                 });
 
             var sections = div.append('div')
@@ -119,9 +127,7 @@ d3.json('index.json', function(err, index) {
                 return d[0];
             });
 
-        sections
-            .exit()
-            .remove();
+        sections.exit().remove();
 
         var li = sections
             .enter()

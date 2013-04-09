@@ -85,6 +85,10 @@ ul.items li.active {
     margin-bottom:0;
 }
 
+#section.loading {
+    opacity:0.5;
+}
+
 div section:first-child {
     border-top:none;
 }
