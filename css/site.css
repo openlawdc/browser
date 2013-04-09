@@ -2,16 +2,46 @@ html, body {
     height:100%;
 }
 
+.code-browser a {
+    color:blue;
+}
+
+.restrict {
+    position:absolute;
+    top:0;
+    right:0;
+    left:0;
+    bottom:40px;
+}
+
+.footer {
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    border-top:1px solid #ccc;
+    padding:5px 10px;
+    height:40px;
+}
+
 .nav {
     border-right:1px solid #ccc;
     height:100%;
     overflow:auto;
 }
 
+.nav h2 {
+    margin-bottom: 0;
+}
+
 ul.items li {
-    padding:5px 10px;
     border-top:1px solid #ccc;
     transition:background 50ms linear;
+    padding:5px 10px;
+}
+
+ul.items#titles li {
+    padding:5px 10px 0 10px;
 }
 
 ul.items li:hover {
@@ -23,27 +53,48 @@ ul.items li.active {
     background-color:#eec;
 }
 
+.number {
+    color:#777;
+    width:20px;
+    text-align:right;
+    display:block;
+    float:left;
+}
+
+.name {
+    margin-left:30px;
+    display:block;
+}
+
+.section-number {
+    color:#777;
+    margin-right:5px;
+}
+
 .content {
     height:100%;
     overflow:auto;
 }
 
-.sections section {
+.content h1 {
+    border-bottom:1px solid #ccc;
+    margin-bottom:0;
+}
+
+section {
     border-top:1px solid #ccc;
     padding:10px 5px;
 }
 
-.shoutout {
-    position:fixed;
-    bottom:0px;
-    right:0px;
-    width:200px;
-    background:#fff;
-    opacity:0.7;
-    padding:5px;
-    font-size:13px;
+section .section-prefix {
+    display:inline-block;
+    margin-right:5px;
+    color:#777;
 }
 
-.shoutout:hover {
-    opacity:1;
+.limited-text {
+    border-top:1px solid #ccc;
+    max-height:200px;
+    background:#eee;
+    overflow:auto;
 }

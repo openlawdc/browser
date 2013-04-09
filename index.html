@@ -6,33 +6,31 @@
         <link rel='stylesheet' type='text/css' href='css/site.css' />
         <meta http-equiv='content-type' content='text/html; charset=utf-8' />
     </head>
-    <body>
-        <div class='nav col3'>
-            <div class='pad1'>
-                <h2>Title</h2>
+    <body class='code-browser'>
+        <div class='restrict'>
+            <div class='nav col3'>
+                <div class='pad1'>
+                    <h2>Title</h2>
+                </div>
+                <ul class='items' id='titles'></ul>
             </div>
-            <ul class='items' id='titles'></ul>
-        </div>
-        <div class='nav col3'>
-            <div class='pad1'>
-                <h2>Section</h2>
+            <div class='nav col3'>
+                <div class='pad1'>
+                    <h2>Section</h2>
+                </div>
+                <ul class='items' id='sections'></ul>
             </div>
-            <ul class='items' id='sections'></ul>
-        </div>
-        <div class='col6 content'>
-            <div class='pad1'>
+            <div class='col6 content'>
                 <div id='section'>
-                    <h1></h1>
-                    <div class='text'></div>
-                    <div class='sections'></div>
                 </div>
             </div>
         </div>
-        <div class='shoutout'>
-        <a href='https://github.com/openlawdc/dc-decoded'>the generation</a>
-        and <a href='https://github.com/openlawdc/code-browser'>display</a>
-        of this text is <a href='https://github.com/openlawdc'>open source.
-        help out!</a></div>
+        <div class='footer'>
+            <a href='http://macwright.org/2013/04/04/the-open-code.html'>unofficial washington, dc code</a> +
+            an open-source
+            <a href='https://github.com/openlawdc/dc-decoded'>parser</a>
+            and <a href='https://github.com/openlawdc/code-browser'>browser</a>
+        </div>
         <script src='js/d3.v3.min.js'></script>
         <script src='js/browser.js'></script>
     </body>

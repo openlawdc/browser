@@ -1,48 +1,103 @@
 d3.json('index.json', function(err, index) {
 
+    // Build initial title listing
     var titles = d3.select('#titles')
         .selectAll('li.title')
-        .data(index.titles)
+        .data(index.titles);
+
+    var li = titles
         .enter()
         .append('li')
         .attr('class', 'title')
-        .text(function(d) {
-            return d[0] + ': ' + d[1];
-        })
-        .on('click', clickTitle);
+        .on('click', clickTitle)
+        .append('div')
+        .attr('class', 'clearfix');
+
+    li.append('span')
+        .attr('class', 'number')
+        .text(function(d) { return d[0]; });
+
+    li.append('span')
+        .attr('class', 'name')
+        .text(function(d) { return d[1]; });
 
     function clickTitle(d) {
         var t = this;
         titles
-            .classed('active', function(d) {
-                return this == t;
-            });
+            .classed('active', function(d) { return this == t; });
 
         sectionsFor(d);
     }
 
-    var s = d3.select('#section');
-    var subsections = d3.select('.sections');
-
     function doSection(d) {
-        d3.json('sections/' + d[0].replace('§ ', '')
-            .replace(/\./g, '').trim() + '.json', function(err, section) {
+        d3.json('sections/' + d[0] + '.json', function(err, section) {
             var s = d3.select('#section');
-            s.select('h1').text(section.heading.catch_text);
-            s.select('.text').text(section.text);
 
-            var sections = subsections.selectAll('section')
+            var content = s.selectAll('div.content')
+                .data([section], function(d) { return JSON.stringify(d); });
+
+            content.exit().remove();
+
+            var div = content.enter()
+                .append('div')
+                .attr('class', 'content');
+
+            div.append('h1')
+                .attr('class', 'pad1')
+                .text(function(d) {
+                    return d.heading.catch_text;
+                });
+
+            div.append('div')
+                .attr('class', 'pad1')
+                .text(function(d) {
+                    return d.text;
+                });
+
+            var sections = div.append('div')
+                .attr('class', 'pad1')
+                .selectAll('section')
                 .data(section.sections, function(d) {
                     return d.prefix + d.text;
                 });
 
-            sections.enter().append('section');
-
+            var sectionelem = sections.enter().append('section');
             sections.exit().remove();
 
-            sections.html(function(d) {
-                return '<strong>' + d.prefix + '</strong> ' + d.text;
-            });
+            var section_p = sectionelem.append('p');
+
+            section_p.append('span')
+                .attr('class', 'section-prefix')
+                .text(function(d) {
+                    return d.prefix;
+                });
+
+            section_p.append('span')
+                .text(function(d) {
+                    return d.text;
+                });
+
+            if (section.credits) {
+                var credits = div.append('div')
+                    .attr('class', 'pad1 limited-text');
+                credits.append('h4')
+                    .text('Credits');
+                credits.append('p')
+                    .text(function(d) {
+                        return d.credits;
+                    });
+            }
+
+            if (section.historical) {
+                var history = div.append('div')
+                    .attr('class', 'pad1 limited-text');
+                history.append('h4')
+                    .text('Historical');
+                history.append('p')
+                    .text(function(d) {
+                        return d.historical;
+                    });
+            }
         });
     }
 
@@ -50,18 +105,16 @@ d3.json('index.json', function(err, index) {
 
         function clickSection(d) {
             var t = this;
-            sections
-                .classed('active', function(d) {
-                    return this == t;
-                });
+            sections.classed('active', function(d) { return this == t; });
 
             doSection(d);
         }
 
+        // build section list
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .data(index.sections.filter(function(s) {
-                return s[0].match(/§ (\d+)\-/)[1] == title[0];
+                return s[0].match(/(\d+)\-/)[1] == title[0];
             }), function(d) {
                 return d[0];
             });
@@ -70,13 +123,18 @@ d3.json('index.json', function(err, index) {
             .exit()
             .remove();
 
-        sections
+        var li = sections
             .enter()
             .append('li')
             .attr('class', 'section')
-            .text(function(d) {
-                return d[0] + ' ' + d[1];
-            })
             .on('click', clickSection);
+
+        li.append('span')
+            .attr('class', 'section-number')
+            .text(function(d) { return d[0]; });
+
+        li.append('span')
+            .attr('class', 'section-name')
+            .text(function(d) { return d[1]; });
     }
 });
