@@ -50,17 +50,19 @@ d3.json('index.json', function(err, index) {
                     return d.heading.catch_text;
                 });
 
-            div.append('div')
-                .attr('class', 'pad1')
-                .selectAll('p')
-                .data(function(d) {
-                    return section.text.split(/\n+/);
-                })
-                .enter()
-                .append('p')
-                .text(function(d) {
-                    return d;
-                });
+            if (section.text) {
+                div.append('div')
+                    .attr('class', 'pad1')
+                    .selectAll('p')
+                    .data(function(d) {
+                        return section.text.split(/\n+/);
+                    })
+                    .enter()
+                    .append('p')
+                    .text(function(d) {
+                        return d;
+                    });
+            }
 
             var sections = div.append('div')
                 .attr('class', 'pad1')
