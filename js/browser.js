@@ -127,6 +127,9 @@ d3.json('index.json', function(err, index) {
             .enter()
             .append('li')
             .attr('class', 'section')
+            .classed('repealed', function(d) {
+                return d[1].match(/\[Repealed\]/g);
+            })
             .on('click', clickSection);
 
         li.append('span')

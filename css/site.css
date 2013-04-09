@@ -44,6 +44,10 @@ ul.items#titles li {
     padding:5px 10px 0 10px;
 }
 
+ul.items li.repealed {
+    color:#888;
+}
+
 ul.items li:hover {
     background:#eee;
     cursor:pointer;
@@ -81,8 +85,12 @@ ul.items li.active {
     margin-bottom:0;
 }
 
+div section:first-child {
+    border-top:none;
+}
+
 section {
-    border-top:1px solid #ccc;
+    border-top:1px solid #eee;
     padding:10px 5px;
 }
 
