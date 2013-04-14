@@ -30,7 +30,7 @@ d3.json('index.json').on('load', function(index) {
         var title = titles
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d,i) { return d[0] == t; });
-        if(title.empty()){
+        if (title.empty()) {
             alert("Title " + t + " does not exist in the current DC code.");
             return;
         }
