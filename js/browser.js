@@ -33,16 +33,35 @@ d3.json('index.json', function(err, index) {
         var d = t.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
+        
+        //Scroll to the item if we can't already see it
+        var top = t.property('offsetTop');
+        var tc = d3.select('.titles-container');
+        if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
+            tc.property('scrollTop',top-35);
+        }
     }
 
     function findSection(t, s) {
-        findTitle(t);
         updateTitle(s);
+        //Only refresh section list if we're changing titles
+        var currentTitle = d3.select(".title.active");
+        if(currentTitle.empty() || currentTitle.data()[0][0] != t){
+            findTitle(t);
+        }
+        
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; });
         var section = sections
             .filter(function(d, i){ return d[0] === s; });
+
+        //Scroll to the right part of the sections list if we can't see it
+        var sectionsContainer = d3.select('.sections-container');
+        if(section.property('offsetTop') > sectionsContainer.property('scrollTop') + sectionsContainer.property('offsetHeight')){
+            sectionsContainer.property('scrollTop',section.property('offsetTop')-35);
+        }
+
         doSection(section.data()[0]);
     }
 
