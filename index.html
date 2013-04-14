@@ -3,9 +3,10 @@
     <head>
         <title>DC Code Browser</title>
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
-        <link rel='stylesheet' type='text/css' href='css/style.css' />
-        <link rel='stylesheet' type='text/css' href='css/site.css' />
-        <link rel='stylesheet' type='text/css' href='css/icons/style.css' />
+        <link rel='stylesheet' type='text/css' href='css/style.css' media='screen' />
+        <link rel='stylesheet' type='text/css' href='css/site.css' media='screen' />
+        <link rel='stylesheet' type='text/css' href='css/print.css' media='print' />
+        <link rel='stylesheet' type='text/css' href='css/icons/style.css' media='screen' />
         <meta http-equiv='content-type' content='text/html; charset=utf-8' />
     </head>
     <body class='code-browser'>
@@ -16,20 +17,20 @@
                     <span id="code-identifier"></span>
                 </h1>
             </div>
-            <div class="col6 search icon-search">
+            <div class="col6 search icon-search no-print">
                 <input type='text' id='search-title' />
             </div>
         </div>
 
         <div class='restrict'>
-            <div class='nav col3 titles-container'>
+            <div class='nav col3 titles-container no-print'>
                 <h2>
                     <span class="symbol symbol-title">T</span>
                     <span class="title">Title</span>
                 </h2>
                 <ul class='items' id='titles'></ul>
             </div>
-            <div class='nav col3 sections-container'>
+            <div class='nav col3 sections-container no-print'>
                 <h2>
                     <span class="symbol symbol-section">S</span>
                     <span class="title">Section</span>
@@ -41,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div class='footer'>
+        <div class='footer no-print'>
             <a href='http://macwright.org/2013/04/04/the-open-code.html'>unofficial washington, dc code</a> +
             an open-source
             <a href='https://github.com/openlawdc/dc-decoded'>parser</a>
