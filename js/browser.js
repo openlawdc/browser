@@ -38,7 +38,8 @@ d3.json('index.json', function(err, index) {
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; })
-        var section = sections.filter(function(d,i){ return d[0] === s; })
+        var section = sections
+            .filter(function(d,i){ return d[0] === s; });
         doSection(section.data()[0]);
     }
 
@@ -150,7 +151,7 @@ d3.json('index.json', function(err, index) {
     }
 
     function urlFor(cite) {
-        var url = "/current/" + cite.dc_code.title + "-" + cite.dc_code.section;
+        var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
         if (cite.dc_code.subsections.length > 0)
             url += "#" + cite.dc_code.subsections.join("/");
         return url;
