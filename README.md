@@ -12,3 +12,12 @@ site is deployed with [s3cmd](http://s3tools.org/) and takes about 16,000
 `PUT` requests to go live.
 
 CloudFront dist: http://d1eu6ip9xyd6yj.cloudfront.net/
+
+## Precook
+
+Early versions of the results of this code:
+
+The most useful output so far is [JSON sections (zipped)](https://dl.dropbox.com/u/68059/dccode/sections.zip) (21MB) -
+16,569 detected sections (detected with `parse.js`) output into JSON.
+These are fast to generate but downloading them lets you skip the Word Doc
+to Text to Parsed workflow.
