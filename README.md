@@ -17,7 +17,9 @@ CloudFront dist: http://d1eu6ip9xyd6yj.cloudfront.net/
 
 Early versions of the results of this code:
 
-The most useful output so far is [JSON sections (zipped)](https://dl.dropbox.com/u/68059/dccode/sections.zip) (21MB) -
+The most useful output so far is [JSON sections (zipped)](https://dl.dropboxusercontent.com/u/68059/dccode/precook.zip) (21MB) -
 16,569 detected sections (detected with `parse.js`) output into JSON.
 These are fast to generate but downloading them lets you skip the Word Doc
 to Text to Parsed workflow.
+
+Precook is updated with search indices!
