@@ -47,6 +47,8 @@ d3.json('index.json').on('load', function(index) {
         if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
             tc.property('scrollTop',top-35);
         }
+
+        d3.select(".content #section").html("");
     }
 
     function findSection(t, s) {
