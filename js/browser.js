@@ -33,8 +33,8 @@ d3.json('index.json', function(err, index) {
         var d = t.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
-        
-        //Scroll to the item if we can't already see it
+
+        // Scroll to the item if we can't already see it
         var top = t.property('offsetTop');
         var tc = d3.select('.titles-container');
         if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
@@ -46,10 +46,10 @@ d3.json('index.json', function(err, index) {
         updateTitle(s);
         //Only refresh section list if we're changing titles
         var currentTitle = d3.select(".title.active");
-        if(currentTitle.empty() || currentTitle.data()[0][0] != t){
+        if (currentTitle.empty() || currentTitle.data()[0][0] != t) {
             findTitle(t);
         }
-        
+
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; });
@@ -264,6 +264,7 @@ d3.json('index.json', function(err, index) {
                 var title = path.match(/^([\d]+)/)[0];
                 router.setRoute(title + '/' + path);
                 this.value = '';
+                return;
             }
             s.query(this.value, function(d) {
                 doSections(d.map(function(o) {
