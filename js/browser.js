@@ -28,7 +28,7 @@ d3.json('index.json', function(err, index) {
     function findTitle(t) {
         var t = titles
             .classed('active', function(d) { return d[0] === t; })
-            .filter(function(d,i) { return d[0] == t });
+            .filter(function(d,i) { return d[0] == t; });
         var d = t.data()[0];
         sectionsFor(d);
     }
@@ -124,7 +124,7 @@ d3.json('index.json', function(err, index) {
                 var history = div.append('div')
                     .attr('class', 'pad1 limited-text');
                 history.append('h4')
-                    .text('Historical');
+                    .text('Historical and Statutory');
                 history.append('p')
                     .html(function(d) {
                         return cited(d.historical);
@@ -145,7 +145,8 @@ d3.json('index.json', function(err, index) {
                 if (cite.type == "dc_code")
                     return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
                 else if (cite.type == "law")
-                    return "<a href=\"" + "http://www.govtrack.us/search?q=" + cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
+                    return "<a href=\"" + "http://www.govtrack.us/search?q=" +
+                        cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
             }
         }).text;
     }
@@ -164,6 +165,16 @@ d3.json('index.json', function(err, index) {
         });
 
         doSections(data);
+    }
+
+    function searchSection(s) {
+        return index.sections.map(function(s) {
+            return {
+                title: s[0] + ' ' + s[1],
+                value: s[0] + ' ' + s[1],
+                type: 'section'
+            };
+        });
     }
 
     function doSections(data) {
@@ -196,8 +207,6 @@ d3.json('index.json', function(err, index) {
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
 
-        d3.select('.sections-container')
-            .property('scrollTop', 0);
     }
 
     var s = search();
@@ -205,6 +214,9 @@ d3.json('index.json', function(err, index) {
 
     var title_search = d3.select('#search-title').on('keyup', function() {
             if (!this.value) return;
+            if (this.value.match(/^(\d)\-/)) {
+                return combobox.data(searchSection(this.value));
+            }
             s.autocomplete(this.value, function(results) {
                 combobox.data(results.map(function(r) {
                     return {
@@ -216,6 +228,14 @@ d3.json('index.json', function(err, index) {
         })
         .call(combobox)
         .on('change', function() {
+            var data = combobox.data();
+            if (!data.length) return;
+            if (data[0].type === 'section') {
+                var path = this.value.split(' ')[0];
+                var title = path.match(/^([\d]+)/)[0];
+                router.setRoute(title + '/' + path);
+                this.value = '';
+            }
             s.query(this.value, function(d) {
                 doSections(d.map(function(o) {
                     return o.title;

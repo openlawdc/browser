@@ -72,6 +72,7 @@ function search() {
         var terms = cleansplit(q);
         if (!terms) return callback([]);
         var last = terms.pop(), limit = 20;
+        if (!last) return;
         gettrie(last, function(trie) {
             var pos = trie;
             // inch up pos to end
