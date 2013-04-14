@@ -2,25 +2,35 @@
 <html>
     <head>
         <title>DC Code Browser</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
         <link rel='stylesheet' type='text/css' href='css/style.css' />
         <link rel='stylesheet' type='text/css' href='css/site.css' />
+        <link rel='stylesheet' type='text/css' href='css/icons/style.css' />
         <meta http-equiv='content-type' content='text/html; charset=utf-8' />
     </head>
     <body class='code-browser'>
+        <div class="header">
+            <div class="col6">
+                <h1>Washington D.C. Code</h1>
+            </div>
+            <div class="col6 search icon-search">
+                <input type='text' id='search-title' />
+            </div>
+        </div>
+
         <div class='restrict'>
             <div class='nav col3'>
-                <div class='pad1'>
-                    <h2>Title</h2>
-                </div>
+                    <h2>
+                        <span class="symbol symbol-title">T</span>
+                        <span class="title">Title</span>
+                    </h2>
                 <ul class='items' id='titles'></ul>
             </div>
             <div class='nav col3 sections-container'>
-                <div class='pad1'>
-                    <h2>Section</h2>
-                </div>
-                <div class='pad1 small-top'>
-                    <input type='text' id='search-title' />
-                </div>
+                <h2>
+                    <span class="symbol symbol-section">S</span>
+                    <span class="title">Section</span>
+                </h2>
                 <ul class='items' id='sections'></ul>
             </div>
             <div class='col6 content'>

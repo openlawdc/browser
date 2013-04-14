@@ -1,4 +1,5 @@
 html, body {
+    font-family: 'Open Sans', sans-serif;
     height:100%;
 }
 
@@ -9,10 +10,52 @@ html, body {
 
 .restrict {
     position:absolute;
-    top:0;
+    top:50px;
     right:0;
     left:0;
     bottom:40px;
+}
+
+.header {
+    background: rgba(0,0,0,0.8);
+    height: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.header h1 {
+    color: #fff;
+    font-size: 1.4em;
+    line-height: 50px;
+    padding: 0 10px;
+    text-transform: uppercase;
+}
+
+.header .search {
+    background: #000;
+    line-height: 50px;
+}
+
+.header .search:before {
+    color: #ccc;
+    text-align: center;
+    float: left;
+    height: 50px;
+    font-size: 20px;
+    width: 5%;
+}
+
+.header .search input#search-title {
+    background: none;
+    border: none;
+    color: white;
+    float: right;
+    font-size: 1.2em;
+    margin: 0;
+    width:95%;
+    height: 50px;
 }
 
 .footer {
@@ -32,8 +75,45 @@ html, body {
 }
 
 .nav h2 {
-    margin-bottom: 0;
+    height: 35px;
+    line-height: 35px;
+    margin: 0;
+    padding: 0;
 }
+
+.nav h2 span {
+    display: inline-block;
+    float: left;
+}
+
+.nav h2 span.title {
+    font-size: 0.8em;
+    padding-left: 10px;
+}
+
+.nav h2 span.symbol {
+    background: black;
+    color: white;
+    display: inline-block;
+    font-size: 0.6em;
+    text-align: center;
+    width: 35px;
+}
+
+.nav h2 span.symbol-title {
+    background-color: rgba(42,65,150,1);
+}
+
+.nav h2 span.symbol-section {
+    background-color: rgba(67,127,190,1);
+}
+
+.nav h2 span.symbol-category {
+    background-color: rgba(106,203,222,1);
+}
+
+
+
 
 ul.items li {
     border-top:1px solid #ccc;
@@ -125,10 +205,6 @@ section .section-prefix {
     border-bottom:1px solid #eee;
 }
 
-input#search-title {
-    width:100%;
-}
-
 /* combobox dropdown */
 
 div.combobox {
@@ -158,15 +234,14 @@ div.combobox {
     background: #ececec;
 }
 
+.combobox a:hover {
+    cursor: pointer;
+}
+
 .combobox a:first-child {
     border-top: 0;
 }
 
 .combobox-carat {
-    margin-left: -20px;
-    margin-right: 10px;
-    display:inline-block;
-    border-top: 5px solid #ccc;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
+    display: none;
 }
