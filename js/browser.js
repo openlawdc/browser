@@ -99,8 +99,8 @@ d3.json('index.json', function(err, index) {
                 credits.append('h4')
                     .text('Credits');
                 credits.append('p')
-                    .text(function(d) {
-                        return d.credits;
+                    .html(function(d) {
+                        return cited(d.credits);
                     });
             }
 
@@ -110,8 +110,8 @@ d3.json('index.json', function(err, index) {
                 history.append('h4')
                     .text('Historical');
                 history.append('p')
-                    .text(function(d) {
-                        return d.historical;
+                    .html(function(d) {
+                        return cited(d.historical);
                     });
             }
         });
@@ -124,9 +124,12 @@ d3.json('index.json', function(err, index) {
     function cited(text) {
         return Citation.find(text, {
             context: {source: "dc_code"},
-            types: "dc_code",
+            types: ["dc_code", "law"],
             replace: function(cite) {
-                return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
+                if (cite.type == "dc_code")
+                    return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
+                else if (cite.type == "law")
+                    return "law";
             }
         }).text;
     }
