@@ -22,9 +22,24 @@ d3.json('index.json', function(err, index) {
         .text(function(d) { return d[1]; });
 
     function clickTitle(d) {
-        var t = this;
-        titles.classed('active', function(d) { return this == t; });
+        router.setRoute(d[0]);
+    }
+
+    function findTitle(t){
+        var t = titles
+            .classed('active', function(d) { return d[0] === t; })
+            .filter(function(d,i) { return d[0] == t })
+        var d = t.data()[0];
         sectionsFor(d);
+    }
+
+    function findSection(t,s){
+        findTitle(t);
+        var sections = d3.select('#sections')
+            .selectAll('li.section')
+            .classed('active',function(d) { return d[0] === s; })
+        var section = sections.filter(function(d,i){ return d[0] === s; })
+        doSection(section.data()[0]);
     }
 
     function doSection(d) {
@@ -153,9 +168,7 @@ d3.json('index.json', function(err, index) {
     function doSections(data) {
 
         function clickSection(d) {
-            var t = this;
-            sections.classed('active', function(d) { return this == t; });
-            doSection(d);
+            router.setRoute(1,d[0]);
         }
 
         // build section list
@@ -209,4 +222,10 @@ d3.json('index.json', function(err, index) {
             });
         });
 
+    var routes = {
+        '#/:title': findTitle,
+        '#/:title/:section': findSection
+    }
+    router = Router(routes);
+    router.init();    
 });
