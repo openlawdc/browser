@@ -199,7 +199,7 @@ d3.json('index.json', function(err, index) {
         var li = sections
             .enter()
             .append('li')
-            .attr('class', 'section')
+            .attr('class', 'section clearfix')
             .classed('repealed', doesNotApply)
             .on('click', clickSection);
 
