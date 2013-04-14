@@ -34,7 +34,10 @@ d3.json('index.json').on('load', function(index) {
         updateTitle(d[0]);
         sectionsFor(d);
 
-        // Scroll to the item if we can't already see it
+        d3.select('#titles').classed('selected', true);
+        d3.select('#sections').classed('selected', false);
+
+        //Scroll to the item if we can't already see it
         var top = t.property('offsetTop');
         var tc = d3.select('.titles-container');
         if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
@@ -71,6 +74,8 @@ d3.json('index.json').on('load', function(index) {
             d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
 
+            d3.select('#sections').classed('selected', true);
+
             var content = s.selectAll('div.content')
                 .data([section], function(d) { return JSON.stringify(d); });
 
@@ -88,7 +93,7 @@ d3.json('index.json').on('load', function(index) {
 
             if (section.text) {
                 div.append('div')
-                    .attr('class', 'pad1')
+                    .attr('class', 'section-text pad1')
                     .selectAll('p')
                     .data(function(d) {
                         return section.text.split(/\n+/);
