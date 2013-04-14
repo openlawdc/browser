@@ -175,17 +175,25 @@ d3.json('index.json').on('load', function(index) {
                 if (cite.type == "dc_code")
                     return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
                 else if (cite.type == "law")
-                    return "<a href=\"" + "http://www.govtrack.us/search?q=" +
-                        cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
+                    return "<a href=\"" + "http://www.govtrack.us/search?q=" + cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
+                else if (cite.type == "stat")
+                    return "<a href=\"" + statUrlFor(cite) + "\">" + cite.match + "</a>";
             }
         }).text;
     }
 
     function urlFor(cite) {
         var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
-        if (cite.dc_code.subsections.length > 0)
-            url += "#" + cite.dc_code.subsections.join("/");
+        
+        // TODO: link to subsections within a section, somehow
+        // if (cite.dc_code.subsections.length > 0)
+        //     url += "#" + cite.dc_code.subsections.join("/");
+        
         return url;
+    }
+
+    function statUrlFor(cite) {
+        return "http://api.fdsys.gov/link?collection=statute&volume=" + cite.stat.volume + "&page=" + cite.stat.page;
     }
 
     function sectionsFor(title) {
