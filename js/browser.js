@@ -1,4 +1,4 @@
-d3.json('index.json', function(err, index) {
+d3.json('index.json').on('load', function(index) {
 
     // Build initial title listing
     var titles = d3.select('#titles')
@@ -67,7 +67,7 @@ d3.json('index.json', function(err, index) {
 
     function doSection(d) {
         d3.select('#section').classed('loading', true);
-        d3.json('sections/' + d[0] + '.json', function(err, section) {
+        d3.json('sections/' + d[0] + '.json').on('load', function(section) {
             d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
 
@@ -107,15 +107,18 @@ d3.json('index.json', function(err, index) {
                     return d.prefix + d.text;
                 });
 
+            function sectionClass(d) {
+                var c = '';
+                if (d.prefix.match(/([a-z])/)) c = 'section-1';
+                else if (d.prefix.match(/([0-9])/)) c = 'section-2';
+                else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
+                return c;
+            }
+
             var sectionelem = sections.enter()
                 .append('section')
-                .attr('class', function(d) {
-                    var c = '';
-                    if (d.prefix.match(/([a-z])/)) c = 'section-1';
-                    else if (d.prefix.match(/([0-9])/)) c = 'section-2';
-                    else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
-                    return c;
-                });
+                .attr('class', sectionClass);
+
             sections.exit().remove();
 
             var section_p = sectionelem.append('p');
@@ -152,7 +155,7 @@ d3.json('index.json', function(err, index) {
                         return cited(d.historical);
                     });
             }
-        });
+        }).get();
     }
 
     function doesNotApply(d) {
@@ -279,4 +282,4 @@ d3.json('index.json', function(err, index) {
     };
     router = Router(routes);
     router.init();
-});
+}).get();
