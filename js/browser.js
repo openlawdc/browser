@@ -84,6 +84,8 @@ d3.json('index.json').on('load', function(index) {
             var div = content.enter()
                 .append('div')
                 .attr('class', 'content');
+                .attr('class', 'content')
+                .property('scrollTop',0);
 
             div.append('h1')
                 .attr('class', 'pad1')
