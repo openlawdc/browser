@@ -140,6 +140,15 @@ d3.json('index.json', function(err, index) {
 
     function sectionsFor(title) {
 
+        var data = index.sections.filter(function(s) {
+            return s[0].match(/(\d+)\-/)[1] == title[0];
+        });
+
+        doSections(data);
+    }
+
+    function doSections(data) {
+
         function clickSection(d) {
             var t = this;
             sections.classed('active', function(d) { return this == t; });
@@ -149,9 +158,7 @@ d3.json('index.json', function(err, index) {
         // build section list
         var sections = d3.select('#sections')
             .selectAll('li.section')
-            .data(index.sections.filter(function(s) {
-                return s[0].match(/(\d+)\-/)[1] == title[0];
-            }), function(d) {
+            .data(data, function(d) {
                 return d[0];
             });
 
@@ -175,4 +182,28 @@ d3.json('index.json', function(err, index) {
         d3.select('.sections-container')
             .property('scrollTop', 0);
     }
+
+    var s = search();
+    var combobox = d3.combobox();
+
+    var title_search = d3.select('#search-title').on('keyup', function() {
+            if (!this.value) return;
+            s.autocomplete(this.value, function(results) {
+                combobox.data(results.map(function(r) {
+                    return {
+                        title: r,
+                        value: r
+                    };
+                }));
+            });
+        })
+        .call(combobox)
+        .on('change', function() {
+            s.query(this.value, function(d) {
+                doSections(d.map(function(o) {
+                    return o.title;
+                }));
+            });
+        });
+
 });

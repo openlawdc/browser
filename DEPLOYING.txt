@@ -1,0 +1,5 @@
+scp -i ~/.ssh/tmcw2k13.pem ~/.s3cmd-personal ubuntu@ec2-54-234-130-0.compute-1.amazonaws.com:
+scp -i ~/.ssh/tmcw2k13.pem code.tgz ubuntu@ec2-54-234-130-0.compute-1.amazonaws.com:
+sudo apt-get install s3cmd
+s3cmd -c ../.s3cmd-personal put --acl-public --recursive * s3://dccodebrowser/
+> 21m0.433s
