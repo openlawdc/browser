@@ -30,10 +30,10 @@ d3.json('index.json').on('load', function(index) {
         var title = titles
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d,i) { return d[0] == t; });
-        if (title.empty()) {
-            alert("Title " + t + " does not exist in the current DC code.");
-            return;
-        }
+        // if (title.empty()) {
+        //     alert("Title " + t + " does not exist in the current DC code.");
+        //     return;
+        // }
         var d = title.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
