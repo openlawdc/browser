@@ -11,6 +11,14 @@ initial target for deployment is [Amazon S3](http://aws.amazon.com/s3/). The
 site is deployed with [s3cmd](http://s3tools.org/) and takes about 16,000
 `PUT` requests to go live.
 
+## Setup
+
+    git clone git@github.com:openlawdc/code-browser.git
+    make
+
+Then boot up a local development server: https://gist.github.com/tmcw/4989751
+and go to the url specified there, like `http://localhost:8080/`
+
 CloudFront dist: http://d1eu6ip9xyd6yj.cloudfront.net/
 
 ## Precook
