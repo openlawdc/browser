@@ -247,6 +247,7 @@ li.active .section-number {
 
 .content h1 {
     border-bottom:1px solid #ccc;
+    line-height: 1.4em;
     margin-bottom:0;
 }
 
