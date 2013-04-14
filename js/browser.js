@@ -160,6 +160,19 @@ d3.json('index.json').on('load', function(index) {
                         return cited(d.historical);
                     });
             }
+
+            var downloads = div.append('p').attr('class', 'pad1');
+
+            downloads.append('span').text('download: ');
+
+            downloads.append('a')
+                .text(function(d) {
+                    return d.heading.identifier + '.json';
+                })
+                .attr('href', function(d) {
+                    return 'sections/' + d.heading.identifier + '.json';
+                });
+
         }).get();
     }
 
