@@ -27,10 +27,14 @@ d3.json('index.json').on('load', function(index) {
     }
 
     function findTitle(t) {
-        var t = titles
+        var title = titles
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d,i) { return d[0] == t; });
-        var d = t.data()[0];
+        if(title.empty()){
+            alert("Title " + t + " does not exist in the current DC code.");
+            return;
+        }
+        var d = title.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
 
@@ -38,7 +42,7 @@ d3.json('index.json').on('load', function(index) {
         d3.select('#sections').classed('selected', false);
 
         //Scroll to the item if we can't already see it
-        var top = t.property('offsetTop');
+        var top = title.property('offsetTop');
         var tc = d3.select('.titles-container');
         if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
             tc.property('scrollTop',top-35);
@@ -58,6 +62,11 @@ d3.json('index.json').on('load', function(index) {
             .classed('active',function(d) { return d[0] === s; });
         var section = sections
             .filter(function(d, i){ return d[0] === s; });
+
+        //Handle what happens if we specify an invalid section.  TODO: Do this better
+        if(section.empty()){
+            return;
+        }
 
         //Scroll to the right part of the sections list if we can't see it
         var sectionsContainer = d3.select('.sections-container');
@@ -83,7 +92,6 @@ d3.json('index.json').on('load', function(index) {
 
             var div = content.enter()
                 .append('div')
-                .attr('class', 'content');
                 .attr('class', 'content')
                 .property('scrollTop',0);
 
