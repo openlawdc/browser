@@ -23,6 +23,7 @@ d3.json('index.json', function(err, index) {
 
     function clickTitle(d) {
         router.setRoute(d[0]);
+        updateTitle(d[0]);
     }
 
     function findTitle(t) {
@@ -170,6 +171,7 @@ d3.json('index.json', function(err, index) {
 
         function clickSection(d) {
             router.setRoute(1,d[0]);
+            updateTitle(d[0]);
         }
 
         // build section list
@@ -198,6 +200,12 @@ d3.json('index.json', function(err, index) {
 
         d3.select('.sections-container')
             .property('scrollTop', 0);
+    }
+
+    function updateTitle(title) {
+        if (title)
+            d3.select('#code-identifier').text('§ ' + title);
+        else d3.select('#code-identifier').text('');
     }
 
     var s = search();
