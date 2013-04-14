@@ -31,11 +31,13 @@ d3.json('index.json', function(err, index) {
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d,i) { return d[0] == t });
         var d = t.data()[0];
+        updateTitle(d[0]);
         sectionsFor(d);
     }
 
     function findSection(t, s) {
         findTitle(t);
+        updateTitle(s);
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; });
