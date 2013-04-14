@@ -4,8 +4,12 @@ html, body {
 }
 
 .code-browser a {
-    color: blue;
-    text-decoration: underline;
+    color: rgba(67,127,190,1);
+    font-weight: bold;
+    /*text-decoration: underline;*/
+}
+.code-browser a:hover {
+    color: rgba(42,65,150,1);
 }
 
 .restrict {
@@ -206,11 +210,11 @@ ul#sections.items li {
     padding: 10px;
 }
 
-ul.items.selected li {
+.nav.selected ul.items li {
     opacity: 0.6;
 }
 
-ul.items.selected li.active {
+.nav.selected ul.items li.active {
     opacity: 1;
 }
 
@@ -273,9 +277,8 @@ section .section-prefix {
 
 .limited-text {
     border-top:1px solid #ccc;
-    max-height:200px;
     background:#eee;
-    overflow:auto;
+    color: #666;
 }
 
 .pad1.small-top {

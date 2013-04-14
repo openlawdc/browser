@@ -38,8 +38,8 @@ d3.json('index.json').on('load', function(index) {
         updateTitle(d[0]);
         sectionsFor(d);
 
-        d3.select('#titles').classed('selected', true);
-        d3.select('#sections').classed('selected', false);
+        d3.select('.titles-container').classed('selected', true);
+        d3.select('.sections-container').classed('selected', false);
 
         //Scroll to the item if we can't already see it
         var top = title.property('offsetTop');
@@ -83,7 +83,7 @@ d3.json('index.json').on('load', function(index) {
             d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
 
-            d3.select('#sections').classed('selected', true);
+            d3.select('.sections-container').classed('selected', true);
 
             var content = s.selectAll('div.content')
                 .data([section], function(d) { return JSON.stringify(d); });
@@ -96,14 +96,15 @@ d3.json('index.json').on('load', function(index) {
                 .property('scrollTop',0);
 
             div.append('h1')
-                .attr('class', 'pad1')
+                .attr('class', 'pad2')
+                .attr('id', 'article-title')
                 .text(function(d) {
                     return d.heading.catch_text;
                 });
 
             if (section.text) {
                 div.append('div')
-                    .attr('class', 'section-text pad1')
+                    .attr('class', 'section-text pad2')
                     .selectAll('p')
                     .data(function(d) {
                         return section.text.split(/\n+/);
@@ -116,7 +117,7 @@ d3.json('index.json').on('load', function(index) {
             }
 
             var sections = div.append('div')
-                .attr('class', 'pad1')
+                .attr('class', 'pad2')
                 .selectAll('section')
                 .data(section.sections, function(d) {
                     return d.prefix + d.text;
@@ -151,7 +152,7 @@ d3.json('index.json').on('load', function(index) {
 
             if (section.credits) {
                 var credits = div.append('div')
-                    .attr('class', 'pad1 limited-text');
+                    .attr('class', 'pad2 limited-text');
                 credits.append('h4')
                     .text('Credits');
                 credits.append('p')
@@ -162,7 +163,7 @@ d3.json('index.json').on('load', function(index) {
 
             if (section.historical) {
                 var history = div.append('div')
-                    .attr('class', 'pad1 limited-text');
+                    .attr('class', 'pad2 limited-text');
                 history.append('h4')
                     .text('Historical and Statutory');
                 history.append('p')
@@ -207,11 +208,11 @@ d3.json('index.json').on('load', function(index) {
 
     function urlFor(cite) {
         var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
-        
+
         // TODO: link to subsections within a section, somehow
         // if (cite.dc_code.subsections.length > 0)
         //     url += "#" + cite.dc_code.subsections.join("/");
-        
+
         return url;
     }
 
