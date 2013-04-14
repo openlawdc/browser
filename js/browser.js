@@ -25,21 +25,21 @@ d3.json('index.json', function(err, index) {
         router.setRoute(d[0]);
     }
 
-    function findTitle(t){
+    function findTitle(t) {
         var t = titles
             .classed('active', function(d) { return d[0] === t; })
-            .filter(function(d,i) { return d[0] == t })
+            .filter(function(d,i) { return d[0] == t });
         var d = t.data()[0];
         sectionsFor(d);
     }
 
-    function findSection(t,s){
+    function findSection(t, s) {
         findTitle(t);
         var sections = d3.select('#sections')
             .selectAll('li.section')
-            .classed('active',function(d) { return d[0] === s; })
+            .classed('active',function(d) { return d[0] === s; });
         var section = sections
-            .filter(function(d,i){ return d[0] === s; });
+            .filter(function(d, i){ return d[0] === s; });
         doSection(section.data()[0]);
     }
 
@@ -226,7 +226,7 @@ d3.json('index.json', function(err, index) {
     var routes = {
         '#/:title': findTitle,
         '#/:title/:section': findSection
-    }
+    };
     router = Router(routes);
-    router.init();    
+    router.init();
 });
