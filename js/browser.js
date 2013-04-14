@@ -1,4 +1,4 @@
-d3.json('index.json', function(err, index) {
+d3.json('index.json').on('load', function(index) {
 
     // Build initial title listing
     var titles = d3.select('#titles')
@@ -29,28 +29,52 @@ d3.json('index.json', function(err, index) {
     function findTitle(t) {
         var t = titles
             .classed('active', function(d) { return d[0] === t; })
-            .filter(function(d,i) { return d[0] == t });
+            .filter(function(d,i) { return d[0] == t; });
         var d = t.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
+
+        d3.select('#titles').classed('selected', true);
+        d3.select('#sections').classed('selected', false);
+
+        //Scroll to the item if we can't already see it
+        var top = t.property('offsetTop');
+        var tc = d3.select('.titles-container');
+        if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
+            tc.property('scrollTop',top-35);
+        }
     }
 
     function findSection(t, s) {
-        findTitle(t);
         updateTitle(s);
+        //Only refresh section list if we're changing titles
+        var currentTitle = d3.select(".title.active");
+        if (currentTitle.empty() || currentTitle.data()[0][0] != t) {
+            findTitle(t);
+        }
+
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; });
         var section = sections
             .filter(function(d, i){ return d[0] === s; });
+
+        //Scroll to the right part of the sections list if we can't see it
+        var sectionsContainer = d3.select('.sections-container');
+        if(section.property('offsetTop') > sectionsContainer.property('scrollTop') + sectionsContainer.property('offsetHeight')){
+            sectionsContainer.property('scrollTop',section.property('offsetTop')-35);
+        }
+
         doSection(section.data()[0]);
     }
 
     function doSection(d) {
         d3.select('#section').classed('loading', true);
-        d3.json('sections/' + d[0] + '.json', function(err, section) {
+        d3.json('sections/' + d[0] + '.json').on('load', function(section) {
             d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
+
+            d3.select('#sections').classed('selected', true);
 
             var content = s.selectAll('div.content')
                 .data([section], function(d) { return JSON.stringify(d); });
@@ -69,7 +93,7 @@ d3.json('index.json', function(err, index) {
 
             if (section.text) {
                 div.append('div')
-                    .attr('class', 'pad1')
+                    .attr('class', 'section-text pad1')
                     .selectAll('p')
                     .data(function(d) {
                         return section.text.split(/\n+/);
@@ -88,15 +112,18 @@ d3.json('index.json', function(err, index) {
                     return d.prefix + d.text;
                 });
 
+            function sectionClass(d) {
+                var c = '';
+                if (d.prefix.match(/([a-z])/)) c = 'section-1';
+                else if (d.prefix.match(/([0-9])/)) c = 'section-2';
+                else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
+                return c;
+            }
+
             var sectionelem = sections.enter()
                 .append('section')
-                .attr('class', function(d) {
-                    var c = '';
-                    if (d.prefix.match(/([a-z])/)) c = 'section-1';
-                    else if (d.prefix.match(/([0-9])/)) c = 'section-2';
-                    else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
-                    return c;
-                });
+                .attr('class', sectionClass);
+
             sections.exit().remove();
 
             var section_p = sectionelem.append('p');
@@ -127,13 +154,13 @@ d3.json('index.json', function(err, index) {
                 var history = div.append('div')
                     .attr('class', 'pad1 limited-text');
                 history.append('h4')
-                    .text('Historical');
+                    .text('Historical and Statutory');
                 history.append('p')
                     .html(function(d) {
                         return cited(d.historical);
                     });
             }
-        });
+        }).get();
     }
 
     function doesNotApply(d) {
@@ -157,8 +184,11 @@ d3.json('index.json', function(err, index) {
 
     function urlFor(cite) {
         var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
+        
+        // TODO: link to subsections within a section, somehow
         // if (cite.dc_code.subsections.length > 0)
         //     url += "#" + cite.dc_code.subsections.join("/");
+        
         return url;
     }
 
@@ -173,6 +203,16 @@ d3.json('index.json', function(err, index) {
         });
 
         doSections(data);
+    }
+
+    function searchSection(s) {
+        return index.sections.map(function(s) {
+            return {
+                title: s[0] + ' ' + s[1],
+                value: s[0] + ' ' + s[1],
+                type: 'section'
+            };
+        });
     }
 
     function doSections(data) {
@@ -194,7 +234,7 @@ d3.json('index.json', function(err, index) {
         var li = sections
             .enter()
             .append('li')
-            .attr('class', 'section')
+            .attr('class', 'section clearfix')
             .classed('repealed', doesNotApply)
             .on('click', clickSection);
 
@@ -206,8 +246,6 @@ d3.json('index.json', function(err, index) {
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
 
-        d3.select('.sections-container')
-            .property('scrollTop', 0);
     }
 
     function updateTitle(title) {
@@ -221,6 +259,9 @@ d3.json('index.json', function(err, index) {
 
     var title_search = d3.select('#search-title').on('keyup', function() {
             if (!this.value) return;
+            if (this.value.match(/^(\d)\-/)) {
+                return combobox.data(searchSection(this.value));
+            }
             s.autocomplete(this.value, function(results) {
                 combobox.data(results.map(function(r) {
                     return {
@@ -232,6 +273,15 @@ d3.json('index.json', function(err, index) {
         })
         .call(combobox)
         .on('change', function() {
+            var data = combobox.data();
+            if (!data.length) return;
+            if (data[0].type === 'section') {
+                var path = this.value.split(' ')[0];
+                var title = path.match(/^([\d]+)/)[0];
+                router.setRoute(title + '/' + path);
+                this.value = '';
+                return;
+            }
             s.query(this.value, function(d) {
                 doSections(d.map(function(o) {
                     return o.title;
@@ -245,4 +295,4 @@ d3.json('index.json', function(err, index) {
     };
     router = Router(routes);
     router.init();
-});
+}).get();

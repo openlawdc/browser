@@ -136,24 +136,28 @@ ul.items li {
 
 ul.items#titles li {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     position: relative;
 }
 
-ul.items li:before {
-    content: '';
-    height: 100%;
-    position: absolute;
-    width: 35px;
-    z-index: 0;
-}
-
 ul.items#titles li.active:before {
-    background-color: rgba(42,65,150,1);
+    /*background-color: rgba(42,65,150,1);*/
 }
 
 ul.items li.repealed {
-    color:#888;
+    position: relative;
+}
+
+ul.items li.repealed:before {
+    content: '';
+    background: transparent url(../img/stripe.png) 0 0 repeat;
+    height: 100%;
+    left:0px;
+    opacity: 0.1;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    z-index: 1;
 }
 
 ul.items li:hover {
@@ -162,32 +166,28 @@ ul.items li:hover {
 }
 
 ul.items li.active {
-    background-color:#eec;
+    background: #ddd;
+    color: white;
 }
 
+ul.items#titles li.active {
+    background-color: rgba(42,65,150,0.9);
+}
+
+ul.items#sections li.active {
+    background-color: rgba(67,127,190,0.9);
+}
 
 ul.items .number {
-    color: #000;
-    width: 35px;
-    display:block;
-    float: left;
+    color: #aaa;
     font-weight: bold;
-    line-height: 35px;
+    padding-right: 10px;
     position: relative;
-    text-align: center;
-    z-index: 0;
-}
 
-ul.items .name {
-    display:block;
-    float: left;
-    margin-left: 10px;
-    max-width: 200px;
 }
-
 
 ul.items li.active .number {
-    color: #fff;
+    color: rgba(256,256,256,0.8);
 }
 
 ul.items .clearfix {
@@ -195,12 +195,38 @@ ul.items .clearfix {
 }
 
 ul.items li {
-    min-height: 35px;
+    width: 100%;
+}
+
+ul.items li.clearfix {
+    display: block;
+}
+
+ul#sections.items li {
+    padding: 10px;
+}
+
+ul.items.selected li {
+    opacity: 0.6;
+}
+
+ul.items.selected li.active {
+    opacity: 1;
 }
 
 .section-number {
-    color:#777;
-    margin-right:5px;
+    color: #aaa;
+    display:block;
+    float: left;
+    font-weight: bold;
+    margin-right: 10px;
+    position: relative;
+    text-align: center;
+    z-index: 0;
+}
+
+li.active .section-number {
+    color: rgba(256,256,256,0.9);
 }
 
 .content {
@@ -210,7 +236,12 @@ ul.items li {
 
 .content h1 {
     border-bottom:1px solid #ccc;
+    line-height: 1.4em;
     margin-bottom:0;
+}
+
+.content .section-text {
+    min-height: 450px;
 }
 
 #section.loading {
