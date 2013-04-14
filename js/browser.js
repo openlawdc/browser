@@ -23,6 +23,7 @@ d3.json('index.json', function(err, index) {
 
     function clickTitle(d) {
         router.setRoute(d[0]);
+        updateTitle(d[0]);
     }
 
     function findTitle(t) {
@@ -30,11 +31,13 @@ d3.json('index.json', function(err, index) {
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d,i) { return d[0] == t; });
         var d = t.data()[0];
+        updateTitle(d[0]);
         sectionsFor(d);
     }
 
     function findSection(t, s) {
         findTitle(t);
+        updateTitle(s);
         var sections = d3.select('#sections')
             .selectAll('li.section')
             .classed('active',function(d) { return d[0] === s; });
@@ -140,7 +143,7 @@ d3.json('index.json', function(err, index) {
     function cited(text) {
         return Citation.find(text, {
             context: {dc_code: {source: "dc_code"}},
-            types: ["dc_code", "law"],
+            types: ["dc_code", "law", "stat"],
             replace: function(cite) {
                 if (cite.type == "dc_code")
                     return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
@@ -181,6 +184,7 @@ d3.json('index.json', function(err, index) {
 
         function clickSection(d) {
             router.setRoute(1,d[0]);
+            updateTitle(d[0]);
         }
 
         // build section list
@@ -207,6 +211,12 @@ d3.json('index.json', function(err, index) {
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
 
+    }
+
+    function updateTitle(title) {
+        if (title)
+            d3.select('#code-identifier').text('§ ' + title);
+        else d3.select('#code-identifier').text('');
     }
 
     var s = search();

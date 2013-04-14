@@ -34,6 +34,12 @@ html, body {
     text-transform: uppercase;
 }
 
+.header h1 #code-identifier {
+    color: #aaa;
+    font-weight: normal;
+    padding-left: 10px
+}
+
 .header .search {
     background: #000;
     line-height: 50px;
