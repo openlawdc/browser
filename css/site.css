@@ -3,7 +3,8 @@ html, body {
 }
 
 .code-browser a {
-    color:blue;
+    color: blue;
+    text-decoration: underline;
 }
 
 .restrict {

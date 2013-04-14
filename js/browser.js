@@ -57,8 +57,8 @@ d3.json('index.json', function(err, index) {
                     })
                     .enter()
                     .append('p')
-                    .text(function(d) {
-                        return d;
+                    .html(function(d) {
+                        return cited(d);
                     });
             }
 
@@ -89,8 +89,8 @@ d3.json('index.json', function(err, index) {
                 });
 
             section_p.append('span')
-                .text(function(d) {
-                    return d.text;
+                .html(function(d) {
+                    return cited(d.text);
                 });
 
             if (section.credits) {
@@ -119,6 +119,23 @@ d3.json('index.json', function(err, index) {
 
     function doesNotApply(d) {
         return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
+    }
+
+    function cited(text) {
+        return Citation.find(text, {
+            context: {source: "dc_code"},
+            types: "dc_code",
+            replace: function(cite) {
+                return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
+            }
+        }).text;
+    }
+
+    function urlFor(cite) {
+        var url = "/current/" + cite.dc_code.title + "-" + cite.dc_code.section;
+        if (cite.dc_code.subsections.length > 0)
+            url += "#" + cite.dc_code.subsections.join("/");
+        return url;
     }
 
     function sectionsFor(title) {
