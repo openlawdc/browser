@@ -13,6 +13,7 @@ html, body {
     top:50px;
     right:0;
     left:0;
+    overflow: hidden;
     bottom:40px;
 }
 
@@ -75,10 +76,16 @@ html, body {
 }
 
 .nav h2 {
+    background: white;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
     height: 35px;
     line-height: 35px;
     margin: 0;
     padding: 0;
+    position: fixed;
+    width: inherit;
+    z-index: 10;
 }
 
 .nav h2 span {
@@ -112,17 +119,31 @@ html, body {
     background-color: rgba(106,203,222,1);
 }
 
-
-
+ul.items {
+    margin-top: 34px;
+}
 
 ul.items li {
     border-top:1px solid #ccc;
     transition:background 50ms linear;
-    padding:5px 10px;
 }
 
 ul.items#titles li {
-    padding:5px 10px 0 10px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+ul.items li:before {
+    content: '';
+    height: 100%;
+    position: absolute;
+    width: 35px;
+    z-index: 0;
+}
+
+ul.items#titles li.active:before {
+    background-color: rgba(42,65,150,1);
 }
 
 ul.items li.repealed {
@@ -138,17 +159,37 @@ ul.items li.active {
     background-color:#eec;
 }
 
-.number {
-    color:#777;
-    width:20px;
-    text-align:right;
+
+ul.items .number {
+    color: #000;
+    width: 35px;
     display:block;
-    float:left;
+    float: left;
+    font-weight: bold;
+    line-height: 35px;
+    position: relative;
+    text-align: center;
+    z-index: 0;
 }
 
-.name {
-    margin-left:30px;
+ul.items .name {
     display:block;
+    float: left;
+    margin-left: 10px;
+    max-width: 200px;
+}
+
+
+ul.items li.active .number {
+    color: #fff;
+}
+
+ul.items .clearfix {
+    margin: 0;
+}
+
+ul.items li {
+    min-height: 35px;
 }
 
 .section-number {
