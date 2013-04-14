@@ -129,7 +129,7 @@ d3.json('index.json', function(err, index) {
                 if (cite.type == "dc_code")
                     return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
                 else if (cite.type == "law")
-                    return "law";
+                    return "<a href=\"" + "http://www.govtrack.us/search?q=" + cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
             }
         }).text;
     }
