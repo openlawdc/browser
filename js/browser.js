@@ -143,7 +143,7 @@ d3.json('index.json', function(err, index) {
     function cited(text) {
         return Citation.find(text, {
             context: {dc_code: {source: "dc_code"}},
-            types: ["dc_code", "law"],
+            types: ["dc_code", "law", "stat"],
             replace: function(cite) {
                 if (cite.type == "dc_code")
                     return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
