@@ -42,18 +42,19 @@ d3.json('index.json').on('load', function(index) {
         d3.select('.sections-container').classed('selected', false);
 
         //Scroll to the item if we can't already see it
-        var top = title.property('offsetTop');
-        var tc = d3.select('.titles-container');
-        if(top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
+        var top = title.property('offsetTop'),
+            tc = d3.select('.titles-container');
+
+        if (top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
             tc.property('scrollTop',top-35);
         }
 
-        d3.select(".content #section").html("");
+        d3.select('.content #section').html('');
     }
 
     function findSection(t, s) {
         updateTitle(s);
-        //Only refresh section list if we're changing titles
+        // Only refresh section list if we're changing titles
         var currentTitle = d3.select(".title.active");
         if (currentTitle.empty() || currentTitle.data()[0][0] != t) {
             findTitle(t);
@@ -65,20 +66,21 @@ d3.json('index.json').on('load', function(index) {
         var section = sections
             .filter(function(d, i){ return d[0] === s; });
 
-        //Handle what happens if we specify an invalid section.  TODO: Do this better
-        if(section.empty()){
+        // Handle what happens if we specify an invalid section.  TODO: Do this better
+        if (section.empty()) {
             return;
         }
 
-        //Scroll to the right part of the sections list if we can't see it
+        // Scroll to the right part of the sections list if we can't see it
         var sectionsContainer = d3.select('.sections-container');
-        if(section.property('offsetTop') > sectionsContainer.property('scrollTop') + sectionsContainer.property('offsetHeight')){
+        if (section.property('offsetTop') > sectionsContainer.property('scrollTop') + sectionsContainer.property('offsetHeight')){
             sectionsContainer.property('scrollTop',section.property('offsetTop')-35);
         }
 
         doSection(section.data()[0]);
     }
 
+    // Show an actual section text - header, historical notes, and so on.
     function doSection(d) {
         d3.select('#section').classed('loading', true);
         d3.json('sections/' + d[0] + '.json').on('load', function(section) {
@@ -241,6 +243,7 @@ d3.json('index.json').on('load', function(index) {
         });
     }
 
+    // Show a list of sections
     function doSections(data) {
 
         function clickSection(d) {
@@ -251,9 +254,7 @@ d3.json('index.json').on('load', function(index) {
         // build section list
         var sections = d3.select('#sections')
             .selectAll('li.section')
-            .data(data, function(d) {
-                return d[0];
-            });
+            .data(data, function(d) { return d[0]; });
 
         sections.exit().remove();
 
@@ -271,17 +272,14 @@ d3.json('index.json').on('load', function(index) {
         li.append('span')
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
-
     }
 
     function updateTitle(title) {
-        if (title)
-            d3.select('#code-identifier').text('§ ' + title);
-        else d3.select('#code-identifier').text('');
+        d3.select('#code-identifier').text(title ? ('§ ' + title) : '');
     }
 
-    var s = search();
-    var combobox = d3.combobox();
+    var s = search(),
+        combobox = d3.combobox();
 
     var title_search = d3.select('#search-title').on('keyup', function() {
             if (!this.value) return;
@@ -321,4 +319,23 @@ d3.json('index.json').on('load', function(index) {
     };
     router = Router(routes);
     router.init();
+
+    function keyMove(dir) {
+        return function() {
+            var sections = d3.select('#sections')
+                .selectAll('li.section'), i = null;
+            sections.each(function(_, ix) {
+                if (d3.select(this).classed('active')) i = ix;
+            });
+            if (i === null ||
+                (dir === -1 && i === 0) ||
+                (dir === 1 && i === sections[0].length - 1)) return;
+            d3.select(sections[0][i + dir]).trigger('click');
+        };
+    }
+
+    d3.select(document)
+        .call(d3.keybinding('arrows')
+            .on('←', keyMove(-1))
+            .on('→', keyMove(1)));
 }).get();
