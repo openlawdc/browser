@@ -45,8 +45,8 @@ d3.json('index.json').on('load', function(index) {
         var top = title.property('offsetTop'),
             tc = d3.select('.titles-container');
 
-        if (top > tc.property('scrollTop') + tc.property('offsetHeight')-35){
-            tc.property('scrollTop',top-35);
+        if (top > tc.property('scrollTop') + tc.property('offsetHeight') - 35) {
+            tc.property('scrollTop',top - 35);
         }
 
         d3.select('.content #section').html('');
@@ -317,6 +317,7 @@ d3.json('index.json').on('load', function(index) {
         '#/:title': findTitle,
         '#/:title/:section': findSection
     };
+
     router = Router(routes);
     router.init();
 

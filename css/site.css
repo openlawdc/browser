@@ -286,6 +286,11 @@ section .section-prefix {
     border-bottom:1px solid #eee;
 }
 
+.intro {
+    font-size: 20px;
+    line-height: 30px;
+}
+
 /* combobox dropdown */
 
 div.combobox {
