@@ -198,10 +198,15 @@ d3.json('index.json').on('load', function(index) {
     function cited(text) {
         return Citation.find(text, {
             context: {dc_code: {source: "dc_code"}},
+            excerpt: 40,
             types: ["dc_code", "dc_register", "law", "stat"],
             replace: function(cite) {
-                if (cite.type == "dc_code")
-                    return "<a href=\"" + codeUrlFor(cite) + "\">" + cite.match + "</a>";
+                if (cite.type == "dc_code") {
+                    if (currentCodeCite(cite))
+                        return "<a href=\"" + codeUrlFor(cite) + "\">" + cite.match + "</a>";
+                    else
+                        return cite.match;
+                }
                 else if (cite.type == "law")
                     return "<a href=\"" + lawUrlFor(cite) + "\">" + cite.match + "</a>";
                 else if (cite.type == "dc_register") {
@@ -217,6 +222,18 @@ d3.json('index.json').on('load', function(index) {
                 }
             }
         }).text;
+    }
+
+    // is this a current DC Code cite (something we should cross-link),
+    // or is it to a prior version of the DC Code?
+    function currentCodeCite(cite) {
+        console.log(cite.excerpt);
+        var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
+        
+        if (index > 0 && index < 40) // found, and to the left of the cite
+            return false;
+
+        return true;
     }
 
     function codeUrlFor(cite) {
