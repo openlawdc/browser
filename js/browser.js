@@ -201,16 +201,20 @@ d3.json('index.json').on('load', function(index) {
             types: ["dc_code", "law", "stat"],
             replace: function(cite) {
                 if (cite.type == "dc_code")
-                    return "<a href=\"" + urlFor(cite) + "\">" + cite.match + "</a>";
+                    return "<a href=\"" + codeUrlFor(cite) + "\">" + cite.match + "</a>";
                 else if (cite.type == "law")
-                    return "<a href=\"" + "http://www.govtrack.us/search?q=" + cite.match.replace(" ","%20") + "\">" + cite.match + "</a>";
-                else if (cite.type == "stat")
-                    return "<a href=\"" + statUrlFor(cite) + "\">" + cite.match + "</a>";
+                    return "<a href=\"" + lawUrlFor(cite) + "\">" + cite.match + "</a>";
+                else if (cite.type == "stat") {
+                    if (parseInt(cite.stat.volume, 10) >= 65)
+                        return "<a href=\"" + statUrlFor(cite) + "\">" + cite.match + "</a>";
+                    else
+                        return cite.match;
+                }
             }
         }).text;
     }
 
-    function urlFor(cite) {
+    function codeUrlFor(cite) {
         var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
 
         // TODO: link to subsections within a section, somehow
@@ -218,6 +222,10 @@ d3.json('index.json').on('load', function(index) {
         //     url += "#" + cite.dc_code.subsections.join("/");
 
         return url;
+    }
+
+    function lawUrlFor(cite) {
+        return "http://www.govtrack.us/search?q=" + cite.match.replace(" ", "%20");
     }
 
     function statUrlFor(cite) {
