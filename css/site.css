@@ -147,6 +147,7 @@ ul.items#titles li {
     padding: 10px;
     color:#333;
     text-decoration:none;
+    font-weight:normal;
 }
 
 ul.items#titles li.active:before {

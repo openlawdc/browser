@@ -15,25 +15,17 @@ d3.json('index.json').on('load', function(index) {
 
     li.append('span')
         .attr('class', 'number')
-        .text(function(d) { return d[0]; });
+        .text(getter(0));
 
     li.append('span')
         .attr('class', 'name')
-        .text(function(d) { return d[1]; });
-
-    function clickTitle(d) {
-        router.setRoute(d[0]);
-        updateTitle(d[0]);
-    }
+        .text(getter(1));
 
     function findTitle(t) {
         var title = titles
             .classed('active', function(d) { return d[0] === t; })
-            .filter(function(d,i) { return d[0] == t; });
-        // if (title.empty()) {
-        //     alert("Title " + t + " does not exist in the current DC code.");
-        //     return;
-        // }
+            .filter(function(d, i) { return d[0] == t; });
+
         var d = title.data()[0];
         updateTitle(d[0]);
         sectionsFor(d);
@@ -67,13 +59,12 @@ d3.json('index.json').on('load', function(index) {
             .filter(function(d, i){ return d[0] === s; });
 
         // Handle what happens if we specify an invalid section.  TODO: Do this better
-        if (section.empty()) {
-            return;
-        }
+        if (section.empty()) return;
 
         // Scroll to the right part of the sections list if we can't see it
         var sectionsContainer = d3.select('.sections-container');
-        if (section.property('offsetTop') > sectionsContainer.property('scrollTop') + sectionsContainer.property('offsetHeight')){
+        if (section.property('offsetTop') > sectionsContainer.property('scrollTop') +
+            sectionsContainer.property('offsetHeight')) {
             sectionsContainer.property('scrollTop',section.property('offsetTop')-35);
         }
 
@@ -115,9 +106,7 @@ d3.json('index.json').on('load', function(index) {
                     })
                     .enter()
                     .append('p')
-                    .html(function(d) {
-                        return cited(d);
-                    });
+                    .html(cited);
             }
 
             var sections = div.append('div')
@@ -126,14 +115,6 @@ d3.json('index.json').on('load', function(index) {
                 .data(section.sections, function(d) {
                     return d.prefix + d.text;
                 });
-
-            function sectionClass(d) {
-                var c = '';
-                if (d.prefix.match(/([a-z])/)) c = 'section-1';
-                else if (d.prefix.match(/([0-9])/)) c = 'section-2';
-                else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
-                return c;
-            }
 
             var sectionelem = sections.enter()
                 .append('section')
@@ -145,9 +126,7 @@ d3.json('index.json').on('load', function(index) {
 
             section_p.append('span')
                 .attr('class', 'section-prefix')
-                .text(function(d) {
-                    return d.prefix;
-                });
+                .text(getter('prefix'));
 
             section_p.append('span')
                 .html(function(d) {
@@ -156,24 +135,22 @@ d3.json('index.json').on('load', function(index) {
 
             if (section.credits) {
                 var credits = div.append('div')
-                    .attr('class', 'pad2 limited-text');
+                    .attr('class', 'pad2 limited-text')
+                    .data(function(d) { return d.credits; });
                 credits.append('h4')
                     .text('Credits');
                 credits.append('p')
-                    .html(function(d) {
-                        return cited(d.credits);
-                    });
+                    .html(cited);
             }
 
             if (section.historical) {
                 var history = div.append('div')
-                    .attr('class', 'pad2 limited-text');
+                    .attr('class', 'pad2 limited-text')
+                    .data(function(d) { return d.historical; });
                 history.append('h4')
                     .text('Historical and Statutory');
                 history.append('p')
-                    .html(function(d) {
-                        return cited(d.historical);
-                    });
+                    .html(cited);
             }
 
             var downloads = div.append('p').attr('class', 'pad1');
@@ -195,80 +172,24 @@ d3.json('index.json').on('load', function(index) {
         return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
     }
 
-    function cited(text) {
-        return Citation.find(text, {
-            context: {
-                dc_code: {
-                    source: 'dc_code'
-                }
-            },
-            excerpt: 40,
-            types: ['dc_code', 'dc_register', 'law', 'stat'],
-            replace: function(cite) {
-                if (cite.type == 'dc_code') {
-                    if (currentCodeCite(cite))
-                        return "<a href=\"" + codeUrlFor(cite) + "\">" + cite.match + "</a>";
-                    else
-                        return cite.match;
-                }
-                else if (cite.type == 'law')
-                    return "<a href=\"" + lawUrlFor(cite) + "\">" + cite.match + "</a>";
-                else if (cite.type == 'dc_register') {
-                    if (parseInt(cite.dc_register.volume, 10) >= 57)
-                        return "<a href=\"" + dcrUrlFor(cite) + "\">" + cite.match + "</a>";
-                    else
-                        return cite.match;
-                } else if (cite.type == 'stat') {
-                    if (parseInt(cite.stat.volume, 10) >= 65)
-                        return "<a href=\"" + statUrlFor(cite) + "\">" + cite.match + "</a>";
-                    else
-                        return cite.match;
-                }
-            }
-        }).text;
+    function getter(y) {
+        return function(x) {
+            return x[y];
+        };
     }
 
-    // is this a current DC Code cite (something we should cross-link),
-    // or is it to a prior version of the DC Code?
-    function currentCodeCite(cite) {
-        var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
-        if (index > 0 && index < 40) // found, and to the left of the cite
-            return false;
-
-        return true;
-    }
-
-    function codeUrlFor(cite) {
-        var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
-
-        // TODO: link to subsections within a section, somehow
-        // if (cite.dc_code.subsections.length > 0)
-        //     url += "#" + cite.dc_code.subsections.join("/");
-
-        return url;
-    }
-
-    function lawUrlFor(cite) {
-        return 'http://www.govtrack.us/search?q=' + cite.match.replace(' ', '%20');
-    }
-
-    function statUrlFor(cite) {
-        return 'http://api.fdsys.gov/link?collection=statute&volume=' + cite.stat.volume + '&page=' + cite.stat.page;
-    }
-
-    // just link to that year's copy on the DC Register website
-    function dcrUrlFor(cite) {
-        var year = parseInt(cite.dc_register.volume, 10) + 1953;
-        return 'http://www.dcregs.dc.gov/Gateway/IssueList.aspx?IssueYear=' + year;
+    function sectionClass(d) {
+        var c = '';
+        if (d.prefix.match(/([a-z])/)) c = 'section-1';
+        else if (d.prefix.match(/([0-9])/)) c = 'section-2';
+        else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
+        return c;
     }
 
     function sectionsFor(title) {
-
-        var data = index.sections.filter(function(s) {
+        doSections(index.sections.filter(function(s) {
             return s[0].match(/(\d+)\-/)[1] == title[0];
-        });
-
-        doSections(data);
+        }));
     }
 
     function searchSection(s) {
@@ -284,11 +205,6 @@ d3.json('index.json').on('load', function(index) {
     // Show a list of sections
     function doSections(data) {
 
-        function clickSection(d) {
-            router.setRoute(1,d[0]);
-            updateTitle(d[0]);
-        }
-
         // build section list
         var sections = d3.select('#sections')
             .selectAll('li.section')
@@ -296,20 +212,23 @@ d3.json('index.json').on('load', function(index) {
 
         sections.exit().remove();
 
-        var li = sections
+        var a = sections
             .enter()
             .append('li')
             .attr('class', 'section clearfix')
             .classed('repealed', doesNotApply)
-            .on('click', clickSection);
+            .append('a')
+            .attr('href', function(d) {
+                return '#' + d[0].split('-')[0] + '/' + d[0];
+            });
 
-        li.append('span')
+        a.append('span')
             .attr('class', 'section-number')
-            .text(function(d) { return d[0]; });
+            .text(getter(0));
 
-        li.append('span')
+        a.append('span')
             .attr('class', 'section-name')
-            .text(function(d) { return d[1]; });
+            .text(getter(1));
     }
 
     function updateTitle(title) {
@@ -319,37 +238,42 @@ d3.json('index.json').on('load', function(index) {
     var s = search(),
         combobox = d3.combobox();
 
-    var title_search = d3.select('#search-title').on('keyup', function() {
-            if (!this.value) return;
-            if (this.value.match(/^(\d)\-/)) {
-                return combobox.data(searchSection(this.value));
-            }
-            s.autocomplete(this.value, function(results) {
-                combobox.data(results.map(function(r) {
-                    return {
-                        title: r,
-                        value: r
-                    };
-                }));
-            });
-        })
+    var title_search = d3.select('#search-title')
+        .on('keyup', keyup)
         .call(combobox)
-        .on('change', function() {
-            var data = combobox.data();
-            if (!data.length) return;
-            if (data[0].type === 'section') {
-                var path = this.value.split(' ')[0];
-                var title = path.match(/^([\d]+)/)[0];
-                router.setRoute(title + '/' + path);
-                this.value = '';
-                return;
-            }
-            s.query(this.value, function(d) {
-                doSections(d.map(function(o) {
-                    return o.title;
-                }));
-            });
+        .on('change', change);
+
+    function keyup() {
+        if (!this.value) return;
+        if (this.value.match(/^(\d)\-/)) {
+            return combobox.data(searchSection(this.value));
+        }
+        s.autocomplete(this.value, function(results) {
+            combobox.data(results.map(function(r) {
+                return {
+                    title: r,
+                    value: r
+                };
+            }));
         });
+    }
+
+    function change() {
+        var data = combobox.data();
+        if (!data.length) return;
+        if (data[0].type === 'section') {
+            var path = this.value.split(' ')[0];
+            var title = path.match(/^([\d]+)/)[0];
+            router.setRoute(title + '/' + path);
+            this.value = '';
+            return;
+        }
+        s.query(this.value, function(d) {
+            doSections(d.map(function(o) {
+                return o.title;
+            }));
+        });
+    }
 
     var routes = {
         '#/:title': findTitle,
@@ -358,6 +282,11 @@ d3.json('index.json').on('load', function(index) {
 
     router = Router(routes);
     router.init();
+
+    d3.select(document)
+        .call(d3.keybinding('arrows')
+            .on('←', keyMove(-1))
+            .on('→', keyMove(1)));
 
     function keyMove(dir) {
         return function() {
@@ -372,9 +301,4 @@ d3.json('index.json').on('load', function(index) {
             d3.select(sections[0][i + dir]).trigger('click');
         };
     }
-
-    d3.select(document)
-        .call(d3.keybinding('arrows')
-            .on('←', keyMove(-1))
-            .on('→', keyMove(1)));
 }).get();
