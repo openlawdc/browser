@@ -104,7 +104,7 @@ html, body {
 }
 
 .nav h2 span.title {
-    font-size: 0.8em;
+    font-size: 20px;
     padding-left: 10px;
 }
 
@@ -112,7 +112,7 @@ html, body {
     background: black;
     color: white;
     display: inline-block;
-    font-size: 0.6em;
+    font-size: 20px;
     text-align: center;
     width: 35px;
 }
@@ -140,8 +140,13 @@ ul.items li {
 
 ul.items#titles li {
     margin: 0;
-    padding: 10px;
     position: relative;
+}
+
+.code-browser ul li a {
+    padding: 10px;
+    color:#333;
+    text-decoration:none;
 }
 
 ul.items#titles li.active:before {

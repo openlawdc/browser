@@ -9,8 +9,8 @@ d3.json('index.json').on('load', function(index) {
         .enter()
         .append('li')
         .attr('class', 'title')
-        .on('click', clickTitle)
-        .append('div')
+        .append('a')
+        .attr('href', function(d) { return '#/' + d[0]; })
         .attr('class', 'clearfix');
 
     li.append('span')
