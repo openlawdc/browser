@@ -86,15 +86,11 @@ a {
 }
 
 .nav h2 {
-    background: white;
-    border-bottom: 1px solid #ccc;
-    border-right: 1px solid #ccc;
     height: 35px;
     line-height: 35px;
     margin: 0;
     padding: 0;
     width: 100%;
-    z-index: 10;
 }
 
 .nav h2 span {
@@ -130,7 +126,6 @@ a {
 
 ul.items li {
     border-top:1px solid #ccc;
-    transition:background 50ms linear;
 }
 
 ul li a {
@@ -138,10 +133,7 @@ ul li a {
     color:#333;
     text-decoration:none;
     font-weight:normal;
-}
-
-ul.items#titles li.active:before {
-    /*background-color: rgba(42,65,150,1);*/
+    display:block;
 }
 
 ul.items li.repealed {
@@ -183,7 +175,6 @@ ul.items .number {
     font-weight: bold;
     padding-right: 10px;
     position: relative;
-
 }
 
 ul.items li.active a {

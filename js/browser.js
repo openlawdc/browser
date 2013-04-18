@@ -20,7 +20,7 @@ browser.list = function(selection, linkify) {
         .selectAll('li.title')
         .data(function(d) { return d; }, function(d) { return d[0]; }),
         li = titles.enter().append('li').attr('class', 'title'),
-        a = li.append('a').attr('href', linkify).attr('class', 'clearfix');
+        a = li.append('a').attr('href', linkify);
     titles.exit().remove();
     a.append('span').attr('class', 'number').text(getter(0));
     a.append('span').attr('class', 'name').text(getter(1));
@@ -61,7 +61,7 @@ d3.json('index.json').on('load', function(index) {
         }));
         d3.select('.titles-container').classed('selected', true);
         d3.select('.sections-container').classed('selected', false);
-        // updateTitle(d[0]);
+        updateTitle(t);
     }
 
     function sections(t, s) {
@@ -146,63 +146,6 @@ d3.json('index.json').on('load', function(index) {
                     return 'sections/' + d.heading.identifier + '.json';
                 });
         }).get();
-    }
-
-    function cited(text) {
-        return Citation.find(text, {
-            context: {
-                dc_code: {
-                    source: 'dc_code'
-                }
-            },
-            excerpt: 40,
-            types: ['dc_code', 'dc_register', 'law', 'stat'],
-            replace: {
-                dc_code: codeCited,
-                law: lawCited,
-                dc_register: dcrCited,
-                stat: statCited
-            }
-        }).text;
-    }
-
-    // is this a current DC Code cite (something we should cross-link),
-    // or is it to a prior version of the DC Code?
-    function codeCited(cite) {
-        var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
-        if (index > 0 && index < 40) // found, and to the left of the cite
-            return;
-
-        var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
-        return linked(url, cite.match);
-    }
-
-    function lawCited(cite) {
-        var url = 'http://www.govtrack.us/search?q=' + cite.match.replace(' ', '%20');
-        return linked(url, cite.match);
-    }
-
-    // just link to that year's copy on the DC Register website
-    function dcrCited(cite) {
-        if (parseInt(cite.dc_register.volume, 10) < 57)
-            return;
-
-        var year = parseInt(cite.dc_register.volume, 10) + 1953;
-        var url = 'http://www.dcregs.dc.gov/Gateway/IssueList.aspx?IssueYear=' + year;
-
-        return linked(url, cite.match);
-    }
-
-    function statCited(cite) {
-        if (parseInt(cite.stat.volume, 10) < 65)
-            return;
-
-        var url = 'http://api.fdsys.gov/link?collection=statute&volume=' + cite.stat.volume + '&page=' + cite.stat.page;
-        return linked(url, cite.match);
-    }
-
-    function linked(url, text) {
-        return "<a href=\"" + url + "\">" + text + "</a>";
     }
 
     function listSections(t, d) {
