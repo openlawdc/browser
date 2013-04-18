@@ -1,6 +1,11 @@
 .no-print {
     display:none;
 }
+
 body {
     font:normal 12px/20px Georgia, serif;
+}
+
+h1, h2 {
+    line-height: 150%;
 }
