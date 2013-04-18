@@ -39,8 +39,9 @@ function cited(text) {
     }
 
     function lawCited(cite) {
-        return linked('http://www.govtrack.us/search?q=' + cite.match.replace(' ', '%20'),
-            cite.match);
+        var lawName = cite.law.type + " law " + cite.law.congress + "-" + cite.law.number;
+        var url = 'http://www.govtrack.us/search?q=' + encodeURIComponent(lawName);
+        return linked(url, cite.match);
     }
 
     // just link to that year's copy on the DC Register website
