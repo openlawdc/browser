@@ -14,14 +14,15 @@ browser.list = function(selection, linkify) {
 var titles_div = d3.select('#titles'),
     sections_div = d3.select('#sections'),
     identifier_div = d3.select('#code-identifier'),
+    search_box = d3.select('#search-title'),
     s = search(),
     combobox = d3.combobox();
 
-
 d3.select(document)
-    .call(d3.keybinding('arrows')
+    .call(d3.keybinding('browser')
         .on('←', keyMove(-1))
-        .on('→', keyMove(1)));
+        .on('→', keyMove(1))
+        .on('/', focusSearch));
 
 // pure helpers
 function getter(y) { return function(x) { return x[y]; }; }
@@ -51,6 +52,11 @@ function updateTitle(title) {
     identifier_div.text(title ? ('§ ' + title) : '');
 }
 
+function focusSearch() {
+    d3.event.preventDefault();
+    search_box.node().focus();
+}
+
 function keyMove(dir) {
     return function() {
         var sections = sections_div
@@ -69,7 +75,7 @@ d3.json('index.json').on('load', function(index) {
     titles_div.datum(index.titles)
         .call(browser.list, function(d) { return '#/' + d[0]; });
 
-    var title_search = d3.select('#search-title')
+    var title_search = search_box
         .on('keyup', keyup)
         .call(combobox)
         .on('change', change);
