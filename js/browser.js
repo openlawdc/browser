@@ -198,6 +198,68 @@ d3.json('index.json').on('load', function(index) {
         return c;
     }
 
+    function doesNotApply(d) {
+        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
+    }
+
+    function cited(text) {
+        return Citation.find(text, {
+            context: {
+                dc_code: {
+                    source: 'dc_code'
+                }
+            },
+            excerpt: 40,
+            types: ['dc_code', 'dc_register', 'law', 'stat'],
+            replace: {
+                dc_code: codeCited,
+                law: lawCited,
+                dc_register: dcrCited,
+                stat: statCited
+            }
+        }).text;
+    }
+
+    // is this a current DC Code cite (something we should cross-link),
+    // or is it to a prior version of the DC Code?
+    function codeCited(cite) {
+        var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
+        if (index > 0 && index < 40) // found, and to the left of the cite
+            return;
+
+        var url = "#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section;
+        return linked(url, cite.match);
+    }
+
+    function lawCited(cite) {
+        var url = 'http://www.govtrack.us/search?q=' + cite.match.replace(' ', '%20');
+        return linked(url, cite.match);
+    }
+
+    // just link to that year's copy on the DC Register website
+    function dcrCited(cite) {
+        if (parseInt(cite.dc_register.volume, 10) < 57)
+            return;
+
+        var year = parseInt(cite.dc_register.volume, 10) + 1953;
+        var url = 'http://www.dcregs.dc.gov/Gateway/IssueList.aspx?IssueYear=' + year;
+
+        return linked(url, cite.match);
+    }
+
+    function statCited(cite) {
+        if (parseInt(cite.stat.volume, 10) < 65)
+            return;
+
+        var url = 'http://api.fdsys.gov/link?collection=statute&volume=' + cite.stat.volume + '&page=' + cite.stat.page;
+        return linked(url, cite.match);
+    }
+
+    function linked(url, text) {
+        return "<a href=\"" + url + "\">" + text + "</a>";
+    }
+
+
     function sectionsFor(title) {
         d3.select('#sections').datum(index.sections.filter(function(s) {
             return s[0].match(/(\d+)\-/)[1] == title[0];
