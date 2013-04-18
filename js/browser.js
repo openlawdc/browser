@@ -1,3 +1,28 @@
+var browser = {};
+
+browser.list = function(selection, linkify) {
+    var titles = selection
+        .selectAll('li.title')
+        .data(function(d) { return d; }, function(d) { return d[0]; }),
+        li = titles.enter().append('li').attr('class', 'title'),
+        a = li.append('a').attr('href', linkify);
+    titles.exit().remove();
+    a.append('span').attr('class', 'number').text(getter(0));
+    a.append('span').attr('class', 'name').text(getter(1));
+};
+
+var titles_div = d3.select('#titles'),
+    sections_div = d3.select('#sections'),
+    identifier_div = d3.select('#code-identifier'),
+    s = search(),
+    combobox = d3.combobox();
+
+
+d3.select(document)
+    .call(d3.keybinding('arrows')
+        .on('←', keyMove(-1))
+        .on('→', keyMove(1)));
+
 // pure helpers
 function getter(y) { return function(x) { return x[y]; }; }
 
@@ -22,33 +47,9 @@ function sectionAsComplete(s) {
     return { title: val, value: val, type: 'section' };
 }
 
-var browser = {};
-
-browser.list = function(selection, linkify) {
-    var titles = selection
-        .selectAll('li.title')
-        .data(function(d) { return d; }, function(d) { return d[0]; }),
-        li = titles.enter().append('li').attr('class', 'title'),
-        a = li.append('a').attr('href', linkify);
-    titles.exit().remove();
-    a.append('span').attr('class', 'number').text(getter(0));
-    a.append('span').attr('class', 'name').text(getter(1));
-};
-
-var titles_div = d3.select('#titles'),
-    sections_div = d3.select('#sections'),
-    identifier_div = d3.select('#code-identifier'),
-    s = search(),
-    combobox = d3.combobox();
-
 function updateTitle(title) {
     identifier_div.text(title ? ('§ ' + title) : '');
 }
-
-d3.select(document)
-    .call(d3.keybinding('arrows')
-        .on('←', keyMove(-1))
-        .on('→', keyMove(1)));
 
 function keyMove(dir) {
     return function() {
@@ -86,8 +87,9 @@ d3.json('index.json').on('load', function(index) {
 
     function titles(t) {
         var selected_title = titles_div.selectAll('li.title')
-            .classed('active', function(d) { return d[0] === t; })
+            .classed('active', false)
             .filter(function(d, i) { return d[0] == t; })
+            .classed('active', true)
             .node().scrollIntoView();
         listSections(t, byTitle[t]);
         d3.select('.titles-container').classed('selected', true);
@@ -98,8 +100,9 @@ d3.json('index.json').on('load', function(index) {
     function sections(t, s) {
         titles(t);
         var li = sections_div.selectAll('li.title')
-            .classed('active', function(d) { return d[0] === s; });
-        li.filter(function(d, i) { return d[0] === s; })
+            .classed('active', false)
+            .filter(function(d, i) { return d[0] === s; })
+            .classed('active', true)
             .node().scrollIntoView();
         updateTitle(s);
     }
