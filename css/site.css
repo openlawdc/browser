@@ -3,11 +3,11 @@ html, body {
     height:100%;
 }
 
-.code-browser a {
+a {
     color: rgba(67,127,190,1);
     font-weight: bold;
-    /*text-decoration: underline;*/
 }
+
 .code-browser a:hover {
     color: rgba(42,65,150,1);
 }
@@ -17,12 +17,12 @@ html, body {
     top:50px;
     right:0;
     left:0;
+    bottom:0px;
     overflow: hidden;
-    bottom:40px;
 }
 
 .header {
-    background: rgba(0,0,0,0.8);
+    background: #222;
     height: 50px;
     position: absolute;
     top: 0;
@@ -32,7 +32,7 @@ html, body {
 
 .header h1 {
     color: #fff;
-    font-size: 1.4em;
+    font-size: 25px;
     line-height: 50px;
     padding: 0 10px;
     text-transform: uppercase;
@@ -63,7 +63,7 @@ html, body {
     border: none;
     color: white;
     float: right;
-    font-size: 1.2em;
+    font-size: 20px;
     margin: 0;
     width:95%;
     height: 50px;
@@ -86,16 +86,11 @@ html, body {
 }
 
 .nav h2 {
-    background: white;
-    border-bottom: 1px solid #ccc;
-    border-right: 1px solid #ccc;
     height: 35px;
     line-height: 35px;
     margin: 0;
     padding: 0;
-    position: fixed;
-    width: inherit;
-    z-index: 10;
+    width: 100%;
 }
 
 .nav h2 span {
@@ -104,7 +99,7 @@ html, body {
 }
 
 .nav h2 span.title {
-    font-size: 0.8em;
+    font-size: 20px;
     padding-left: 10px;
 }
 
@@ -112,7 +107,7 @@ html, body {
     background: black;
     color: white;
     display: inline-block;
-    font-size: 0.6em;
+    font-size: 20px;
     text-align: center;
     width: 35px;
 }
@@ -129,23 +124,16 @@ html, body {
     background-color: rgba(106,203,222,1);
 }
 
-ul.items {
-    margin-top: 34px;
-}
-
 ul.items li {
     border-top:1px solid #ccc;
-    transition:background 50ms linear;
 }
 
-ul.items#titles li {
-    margin: 0;
+ul li a {
     padding: 10px;
-    position: relative;
-}
-
-ul.items#titles li.active:before {
-    /*background-color: rgba(42,65,150,1);*/
+    color:#333;
+    text-decoration:none;
+    font-weight:normal;
+    display:block;
 }
 
 ul.items li.repealed {
@@ -187,10 +175,9 @@ ul.items .number {
     font-weight: bold;
     padding-right: 10px;
     position: relative;
-
 }
 
-ul.items li.active .number {
+ul.items li.active a {
     color: rgba(256,256,256,0.8);
 }
 
@@ -204,10 +191,6 @@ ul.items li {
 
 ul.items li.clearfix {
     display: block;
-}
-
-ul#sections.items li {
-    padding: 10px;
 }
 
 .nav.selected ul.items li {
@@ -240,12 +223,7 @@ li.active .section-number {
 
 .content h1 {
     border-bottom:1px solid #ccc;
-    line-height: 1.4em;
     margin-bottom:0;
-}
-
-.content .section-text {
-
 }
 
 #section.loading {
@@ -286,9 +264,22 @@ section .section-prefix {
     border-bottom:1px solid #eee;
 }
 
-.intro {
-    font-size: 20px;
-    line-height: 30px;
+.about-button {
+    float:right;
+    font-weight:normal;
+    font-size:13px;
+    background:#444;
+    color:#eee;
+    line-height:20px;
+    padding:5px 10px;
+    display:inline-block;
+    margin: 10px 0;
+    border:1px solid #000;
+    border-radius:3px;
+}
+
+.about-button:hover {
+    background:#555;
 }
 
 /* combobox dropdown */

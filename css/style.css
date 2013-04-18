@@ -94,17 +94,13 @@ p {
 
 /* Links */
 a {
-  color:#77c453;
   text-decoration:none;
   }
   a:visited {
-    color:#9ed485;
     }
   a:hover {
-    color:#54af29;
     }
   a:active {
-    color:#9ed485;
     }
 
 abbr {
