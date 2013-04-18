@@ -225,7 +225,8 @@ d3.json('index.json').on('load', function(index) {
     }
 
     function lawCited(cite) {
-        var url = 'http://www.govtrack.us/search?q=' + cite.match.replace(' ', '%20');
+        var lawName = cite.law.type + " law " + cite.law.congress + "-" + cite.law.number;
+        var url = 'http://www.govtrack.us/search?q=' + encodeURIComponent(lawName);
         return linked(url, cite.match);
     }
 
