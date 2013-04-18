@@ -190,13 +190,13 @@ d3.json('index.json').on('load', function(index) {
     }
 
     function searchSection(s) {
-        return index.sections.map(sectionAsComplete);
+        return (byTitle[s] || []).map(sectionAsComplete);
     }
 
     function keyup() {
         if (!this.value) return;
-        if (this.value.match(/^(\d)\-/)) {
-            return combobox.data(searchSection(this.value));
+        if (this.value.match(/^(\d+)\-/)) {
+            return combobox.data(searchSection(this.value.match(/^(\d+)\-/)[1]));
         }
         s.autocomplete(this.value, function(results) {
             combobox.data(results.map(function(r) {
