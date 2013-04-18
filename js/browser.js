@@ -78,6 +78,10 @@ d3.json('index.json').on('load', function(index) {
         '#/:title/:section': section
     });
 
+    var byTitle = d3.nest().key(function getSectionNumber(d) {
+        return d[0].split('-')[0];
+    }).map(index.sections);
+
     router.init();
 
     function titles(t) {
@@ -85,9 +89,7 @@ d3.json('index.json').on('load', function(index) {
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d, i) { return d[0] == t; })
             .node().scrollIntoView();
-        listSections(t, index.sections.filter(function(s) {
-            return s[0].match(/(\d+)\-/)[1] == t[0];
-        }));
+        listSections(t, byTitle[t]);
         d3.select('.titles-container').classed('selected', true);
         d3.select('.sections-container').classed('selected', false);
         updateTitle(t);
@@ -95,9 +97,9 @@ d3.json('index.json').on('load', function(index) {
 
     function sections(t, s) {
         titles(t);
-        var sections = sections_div.selectAll('li.title')
+        var li = sections_div.selectAll('li.title')
             .classed('active', function(d) { return d[0] === s; });
-        sections.filter(function(d, i) { return d[0] === s; })
+        li.filter(function(d, i) { return d[0] === s; })
             .node().scrollIntoView();
         updateTitle(s);
     }
