@@ -1,47 +1,68 @@
+// pure helpers
+function getter(y) { return function(x) { return x[y]; }; }
+
+var browser = {};
+
+browser.titles = function(selection) {
+    var titles = selection
+        .selectAll('li.title')
+        .data(function(d) { return d; }),
+        li = titles.enter().append('li')
+            .attr('class', 'title'),
+        a = li.append('a')
+            .attr('href', function(d) { return '#/' + d[0]; })
+            .attr('class', 'clearfix');
+    a.append('span').attr('class', 'number').text(getter(0));
+    a.append('span').attr('class', 'name').text(getter(1));
+};
+
+browser.sections = function(selection) {
+    var sections = selection.selectAll('li.section')
+        .data(function(d) { return d; }, function(d) { return d[0]; });
+
+    sections.exit().remove();
+
+    var a = sections
+        .enter().append('li')
+        .attr('class', 'section clearfix')
+        .classed('repealed', doesNotApply)
+        .append('a')
+        .attr('href', function(d) {
+            return '#' + d[0].split('-')[0] + '/' + d[0];
+        });
+
+    a.append('span').attr('class', 'section-number').text(getter(0));
+    a.append('span').attr('class', 'section-name').text(getter(1));
+
+    function doesNotApply(d) {
+        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
+    }
+};
+
 d3.json('index.json').on('load', function(index) {
 
     // Build initial title listing
     var titles = d3.select('#titles')
-        .selectAll('li.title')
-        .data(index.titles);
-
-    var li = titles
-        .enter()
-        .append('li')
-        .attr('class', 'title')
-        .append('a')
-        .attr('href', function(d) { return '#/' + d[0]; })
-        .attr('class', 'clearfix');
-
-    li.append('span')
-        .attr('class', 'number')
-        .text(getter(0));
-
-    li.append('span')
-        .attr('class', 'name')
-        .text(getter(1));
+        .datum(index.titles)
+        .call(browser.titles);
 
     function findTitle(t) {
         var title = titles
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d, i) { return d[0] == t; });
 
-        var d = title.data()[0];
-        updateTitle(d[0]);
-        sectionsFor(d);
+        // updateTitle(d[0]);
+        sectionsFor(t);
 
         d3.select('.titles-container').classed('selected', true);
         d3.select('.sections-container').classed('selected', false);
 
-        //Scroll to the item if we can't already see it
-        var top = title.property('offsetTop'),
-            tc = d3.select('.titles-container');
-
-        if (top > tc.property('scrollTop') + tc.property('offsetHeight') - 35) {
-            tc.property('scrollTop',top - 35);
-        }
-
-        d3.select('.content #section').html('');
+        // var top = title.property('offsetTop'),
+        //     tc = d3.select('.titles-container');
+        // if (top > tc.property('scrollTop') + tc.property('offsetHeight') - 35) {
+        //     tc.property('scrollTop', top - 35);
+        // }
+        // d3.select('.content #section').html('');
     }
 
     function findSection(t, s) {
@@ -168,15 +189,6 @@ d3.json('index.json').on('load', function(index) {
         }).get();
     }
 
-    function doesNotApply(d) {
-        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
-    }
-
-    function getter(y) {
-        return function(x) {
-            return x[y];
-        };
-    }
 
     function sectionClass(d) {
         var c = '';
@@ -187,9 +199,9 @@ d3.json('index.json').on('load', function(index) {
     }
 
     function sectionsFor(title) {
-        doSections(index.sections.filter(function(s) {
+        d3.select('#sections').datum(index.sections.filter(function(s) {
             return s[0].match(/(\d+)\-/)[1] == title[0];
-        }));
+        })).call(browser.sections);
     }
 
     function searchSection(s) {
@@ -200,35 +212,6 @@ d3.json('index.json').on('load', function(index) {
                 type: 'section'
             };
         });
-    }
-
-    // Show a list of sections
-    function doSections(data) {
-
-        // build section list
-        var sections = d3.select('#sections')
-            .selectAll('li.section')
-            .data(data, function(d) { return d[0]; });
-
-        sections.exit().remove();
-
-        var a = sections
-            .enter()
-            .append('li')
-            .attr('class', 'section clearfix')
-            .classed('repealed', doesNotApply)
-            .append('a')
-            .attr('href', function(d) {
-                return '#' + d[0].split('-')[0] + '/' + d[0];
-            });
-
-        a.append('span')
-            .attr('class', 'section-number')
-            .text(getter(0));
-
-        a.append('span')
-            .attr('class', 'section-name')
-            .text(getter(1));
     }
 
     function updateTitle(title) {
@@ -269,9 +252,10 @@ d3.json('index.json').on('load', function(index) {
             return;
         }
         s.query(this.value, function(d) {
-            doSections(d.map(function(o) {
+            d3.select('#sections')
+                .datum(d.map(function(o) {
                 return o.title;
-            }));
+            })).call(browser.sections);
         });
     }
 
@@ -295,10 +279,10 @@ d3.json('index.json').on('load', function(index) {
             sections.each(function(_, ix) {
                 if (d3.select(this).classed('active')) i = ix;
             });
-            if (i === null ||
-                (dir === -1 && i === 0) ||
-                (dir === 1 && i === sections[0].length - 1)) return;
-            d3.select(sections[0][i + dir]).trigger('click');
+            if (!(i === null || (dir === -1 && i === 0) ||
+                (dir === 1 && i === sections[0].length - 1))) {
+                d3.select(sections[0][i + dir]).trigger('click');
+            }
         };
     }
 }).get();
