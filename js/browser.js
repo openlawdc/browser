@@ -13,6 +13,15 @@ function sectionClass(d) {
     return c;
 }
 
+function sectionUrl(t) {
+    return function(d) { return '#/' + t + '/' + d[0]; };
+}
+
+function sectionAsComplete(s) {
+    var val = s[0] + ' ' + s[1];
+    return { title: val, value: val, type: 'section' };
+}
+
 var browser = {};
 
 browser.list = function(selection, linkify) {
@@ -26,18 +35,38 @@ browser.list = function(selection, linkify) {
     a.append('span').attr('class', 'name').text(getter(1));
 };
 
+var titles_div = d3.select('#titles'),
+    sections_div = d3.select('#sections'),
+    identifier_div = d3.select('#code-identifier'),
+    s = search(),
+    combobox = d3.combobox();
+
+function updateTitle(title) {
+    identifier_div.text(title ? ('§ ' + title) : '');
+}
+
+d3.select(document)
+    .call(d3.keybinding('arrows')
+        .on('←', keyMove(-1))
+        .on('→', keyMove(1)));
+
+function keyMove(dir) {
+    return function() {
+        var sections = sections_div
+            .selectAll('li.section'), i = null;
+        sections.each(function(_, ix) {
+            if (d3.select(this).classed('active')) i = ix;
+        });
+        if (!(i === null || (dir === -1 && i === 0) ||
+            (dir === 1 && i === sections[0].length - 1))) {
+            d3.select(sections[0][i + dir]).trigger('click');
+        }
+    };
+}
+
 d3.json('index.json').on('load', function(index) {
-
-    d3.select(document)
-        .call(d3.keybinding('arrows')
-            .on('←', keyMove(-1))
-            .on('→', keyMove(1)));
-
-    d3.select('#titles').datum(index.titles)
+    titles_div.datum(index.titles)
         .call(browser.list, function(d) { return '#/' + d[0]; });
-
-    var s = search(),
-        combobox = d3.combobox();
 
     var title_search = d3.select('#search-title')
         .on('keyup', keyup)
@@ -52,7 +81,7 @@ d3.json('index.json').on('load', function(index) {
     router.init();
 
     function titles(t) {
-        var selected_title = d3.select('#titles').selectAll('li.title')
+        var selected_title = titles_div.selectAll('li.title')
             .classed('active', function(d) { return d[0] === t; })
             .filter(function(d, i) { return d[0] == t; })
             .node().scrollIntoView();
@@ -66,7 +95,7 @@ d3.json('index.json').on('load', function(index) {
 
     function sections(t, s) {
         titles(t);
-        var sections = d3.select('#sections').selectAll('li.title')
+        var sections = sections_div.selectAll('li.title')
             .classed('active', function(d) { return d[0] === s; });
         sections.filter(function(d, i) { return d[0] === s; })
             .node().scrollIntoView();
@@ -75,15 +104,17 @@ d3.json('index.json').on('load', function(index) {
 
     function section(t, s) {
         sections(t, s);
-        d3.select('#section').classed('loading', true);
-        d3.json('sections/' + s + '.json').on('load', function(section) {
-            d3.select('#section').classed('loading', false);
-            var s = d3.select('#section');
 
+        var section_div = d3.select('#section');
+        section_div.classed('loading', true);
+
+        d3.json('sections/' + s + '.json').on('load', function(section) {
+
+            section_div.classed('loading', false);
             d3.select('.sections-container').classed('selected', true);
 
-            var content = s.selectAll('div.content')
-                .data([section], function(d) { return JSON.stringify(d); });
+            var content = section_div.selectAll('div.content')
+                .data([section], function(d) { return d.heading.identifier; });
 
             content.exit().remove();
 
@@ -94,18 +125,13 @@ d3.json('index.json').on('load', function(index) {
 
             div.append('h1')
                 .attr('class', 'pad2')
-                .attr('id', 'article-title')
-                .text(function(d) {
-                    return d.heading.catch_text;
-                });
+                .text(function(d) { return d.heading.catch_text; });
 
             if (section.text) {
                 div.append('div')
                     .attr('class', 'section-text pad2')
                     .selectAll('p')
-                    .data(function(d) {
-                        return section.text.split(/\n+/);
-                    })
+                    .data(function(d) { return section.text.split(/\n+/); })
                     .enter().append('p').html(cited);
             }
 
@@ -129,11 +155,11 @@ d3.json('index.json').on('load', function(index) {
             section_p.append('span')
                 .html(function(d) { return cited(d.text); });
 
-            var extras = [];
-            if (section.credits) extras.push({ text: section.credits, title: 'Credits' });
-            if (section.historical) extras.push({ text: section.credits, title: 'Historical and Statutory' });
+            var extras = [
+                { text: section.credits, title: 'Credits' },
+                { text: section.credits, title: 'Historical and Statutory' }];
             var extra_sections = div.selectAll('div.limited-text')
-                .data(extras)
+                .data(extras.filter(function(e) { return e.text; }))
                 .enter().append('div').attr('class', 'pad2 limited-text');
             extra_sections.append('h4').text(function(d) { return d.title; });
             extra_sections.append('p').html(function(d) { return cited(d.text); });
@@ -149,24 +175,11 @@ d3.json('index.json').on('load', function(index) {
     }
 
     function listSections(t, d) {
-        d3.select('#sections').datum(d)
-            .call(browser.list, function(d) {
-                return '#/' + t + '/' + d[0];
-            });
+        sections_div.datum(d).call(browser.list, sectionUrl(t));
     }
 
     function searchSection(s) {
-        return index.sections.map(function(s) {
-            return {
-                title: s[0] + ' ' + s[1],
-                value: s[0] + ' ' + s[1],
-                type: 'section'
-            };
-        });
-    }
-
-    function updateTitle(title) {
-        d3.select('#code-identifier').text(title ? ('§ ' + title) : '');
+        return index.sections.map(sectionAsComplete);
     }
 
     function keyup() {
@@ -192,24 +205,10 @@ d3.json('index.json').on('load', function(index) {
             return;
         }
         s.query(this.value, function(d) {
-            d3.select('#sections')
+            sections_div
                 .datum(d.map(function(o) {
                 return o.title;
             })).call(browser.sections);
         });
-    }
-
-    function keyMove(dir) {
-        return function() {
-            var sections = d3.select('#sections')
-                .selectAll('li.section'), i = null;
-            sections.each(function(_, ix) {
-                if (d3.select(this).classed('active')) i = ix;
-            });
-            if (!(i === null || (dir === -1 && i === 0) ||
-                (dir === 1 && i === sections[0].length - 1))) {
-                d3.select(sections[0][i + dir]).trigger('click');
-            }
-        };
     }
 }).get();

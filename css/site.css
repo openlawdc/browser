@@ -17,8 +17,8 @@ a {
     top:50px;
     right:0;
     left:0;
+    bottom:0px;
     overflow: hidden;
-    bottom:40px;
 }
 
 .header {
@@ -264,9 +264,22 @@ section .section-prefix {
     border-bottom:1px solid #eee;
 }
 
-.intro {
-    font-size: 20px;
-    line-height: 30px;
+.about-button {
+    float:right;
+    font-weight:normal;
+    font-size:13px;
+    background:#444;
+    color:#eee;
+    line-height:20px;
+    padding:5px 10px;
+    display:inline-block;
+    margin: 10px 0;
+    border:1px solid #000;
+    border-radius:3px;
+}
+
+.about-button:hover {
+    background:#555;
 }
 
 /* combobox dropdown */
