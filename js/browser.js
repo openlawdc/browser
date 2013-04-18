@@ -1,101 +1,82 @@
 // pure helpers
 function getter(y) { return function(x) { return x[y]; }; }
 
+function doesNotApply(d) {
+    return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
+}
+
+function sectionClass(d) {
+    var c = '';
+    if (d.prefix.match(/([a-z])/)) c = 'section-1';
+    else if (d.prefix.match(/([0-9])/)) c = 'section-2';
+    else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
+    return c;
+}
+
 var browser = {};
 
-browser.titles = function(selection) {
+browser.list = function(selection, linkify) {
     var titles = selection
         .selectAll('li.title')
-        .data(function(d) { return d; }),
-        li = titles.enter().append('li')
-            .attr('class', 'title'),
-        a = li.append('a')
-            .attr('href', function(d) { return '#/' + d[0]; })
-            .attr('class', 'clearfix');
+        .data(function(d) { return d; }, function(d) { return d[0]; }),
+        li = titles.enter().append('li').attr('class', 'title'),
+        a = li.append('a').attr('href', linkify).attr('class', 'clearfix');
+    titles.exit().remove();
     a.append('span').attr('class', 'number').text(getter(0));
     a.append('span').attr('class', 'name').text(getter(1));
 };
 
-browser.sections = function(selection) {
-    var sections = selection.selectAll('li.section')
-        .data(function(d) { return d; }, function(d) { return d[0]; });
-
-    sections.exit().remove();
-
-    var a = sections
-        .enter().append('li')
-        .attr('class', 'section clearfix')
-        .classed('repealed', doesNotApply)
-        .append('a')
-        .attr('href', function(d) {
-            return '#' + d[0].split('-')[0] + '/' + d[0];
-        });
-
-    a.append('span').attr('class', 'section-number').text(getter(0));
-    a.append('span').attr('class', 'section-name').text(getter(1));
-
-    function doesNotApply(d) {
-        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
-    }
-};
-
 d3.json('index.json').on('load', function(index) {
 
-    // Build initial title listing
-    var titles = d3.select('#titles')
-        .datum(index.titles)
-        .call(browser.titles);
+    d3.select(document)
+        .call(d3.keybinding('arrows')
+            .on('←', keyMove(-1))
+            .on('→', keyMove(1)));
 
-    function findTitle(t) {
-        var title = titles
+    d3.select('#titles').datum(index.titles)
+        .call(browser.list, function(d) { return '#/' + d[0]; });
+
+    var s = search(),
+        combobox = d3.combobox();
+
+    var title_search = d3.select('#search-title')
+        .on('keyup', keyup)
+        .call(combobox)
+        .on('change', change);
+
+    var router = Router({
+        '#/:title': titles,
+        '#/:title/:section': section
+    });
+
+    router.init();
+
+    function titles(t) {
+        var selected_title = d3.select('#titles').selectAll('li.title')
             .classed('active', function(d) { return d[0] === t; })
-            .filter(function(d, i) { return d[0] == t; });
-
-        // updateTitle(d[0]);
-        sectionsFor(t);
-
+            .filter(function(d, i) { return d[0] == t; })
+            .node().scrollIntoView();
+        listSections(t, index.sections.filter(function(s) {
+            return s[0].match(/(\d+)\-/)[1] == t[0];
+        }));
         d3.select('.titles-container').classed('selected', true);
         d3.select('.sections-container').classed('selected', false);
-
-        // var top = title.property('offsetTop'),
-        //     tc = d3.select('.titles-container');
-        // if (top > tc.property('scrollTop') + tc.property('offsetHeight') - 35) {
-        //     tc.property('scrollTop', top - 35);
-        // }
-        // d3.select('.content #section').html('');
+        // updateTitle(d[0]);
     }
 
-    function findSection(t, s) {
+    function sections(t, s) {
+        titles(t);
+        var sections = d3.select('#sections').selectAll('li.title')
+            .classed('active', function(d) { return d[0] === s; });
+        sections.filter(function(d, i) { return d[0] === s; })
+            .node().scrollIntoView();
         updateTitle(s);
-        // Only refresh section list if we're changing titles
-        var currentTitle = d3.select(".title.active");
-        if (currentTitle.empty() || currentTitle.data()[0][0] != t) {
-            findTitle(t);
-        }
-
-        var sections = d3.select('#sections')
-            .selectAll('li.section')
-            .classed('active',function(d) { return d[0] === s; });
-        var section = sections
-            .filter(function(d, i){ return d[0] === s; });
-
-        // Handle what happens if we specify an invalid section.  TODO: Do this better
-        if (section.empty()) return;
-
-        // Scroll to the right part of the sections list if we can't see it
-        var sectionsContainer = d3.select('.sections-container');
-        if (section.property('offsetTop') > sectionsContainer.property('scrollTop') +
-            sectionsContainer.property('offsetHeight')) {
-            sectionsContainer.property('scrollTop',section.property('offsetTop')-35);
-        }
-
-        doSection(section.data()[0]);
     }
 
-    // Show an actual section text - header, historical notes, and so on.
-    function doSection(d) {
+    function section(t, s) {
+        sections(t, s);
         d3.select('#section').classed('loading', true);
-        d3.json('sections/' + d[0] + '.json').on('load', function(section) {
+        d3.json('sections/' + s + '.json').on('load', function(section) {
             d3.select('#section').classed('loading', false);
             var s = d3.select('#section');
 
@@ -109,7 +90,7 @@ d3.json('index.json').on('load', function(index) {
             var div = content.enter()
                 .append('div')
                 .attr('class', 'content')
-                .property('scrollTop',0);
+                .property('scrollTop', 0);
 
             div.append('h1')
                 .attr('class', 'pad2')
@@ -125,23 +106,19 @@ d3.json('index.json').on('load', function(index) {
                     .data(function(d) {
                         return section.text.split(/\n+/);
                     })
-                    .enter()
-                    .append('p')
-                    .html(cited);
+                    .enter().append('p').html(cited);
             }
 
             var sections = div.append('div')
                 .attr('class', 'pad2')
                 .selectAll('section')
-                .data(section.sections, function(d) {
-                    return d.prefix + d.text;
-                });
+                .data(section.sections, function(d) { return d.prefix + d.text; });
+
+            sections.exit().remove();
 
             var sectionelem = sections.enter()
                 .append('section')
                 .attr('class', sectionClass);
-
-            sections.exit().remove();
 
             var section_p = sectionelem.append('p');
 
@@ -150,56 +127,25 @@ d3.json('index.json').on('load', function(index) {
                 .text(getter('prefix'));
 
             section_p.append('span')
-                .html(function(d) {
-                    return cited(d.text);
-                });
+                .html(function(d) { return cited(d.text); });
 
-            if (section.credits) {
-                var credits = div.append('div')
-                    .attr('class', 'pad2 limited-text')
-                    .data(function(d) { return d.credits; });
-                credits.append('h4')
-                    .text('Credits');
-                credits.append('p')
-                    .html(cited);
-            }
-
-            if (section.historical) {
-                var history = div.append('div')
-                    .attr('class', 'pad2 limited-text')
-                    .data(function(d) { return d.historical; });
-                history.append('h4')
-                    .text('Historical and Statutory');
-                history.append('p')
-                    .html(cited);
-            }
+            var extras = [];
+            if (section.credits) extras.push({ text: section.credits, title: 'Credits' });
+            if (section.historical) extras.push({ text: section.credits, title: 'Historical and Statutory' });
+            var extra_sections = div.selectAll('div.limited-text')
+                .data(extras)
+                .enter().append('div').attr('class', 'pad2 limited-text');
+            extra_sections.append('h4').text(function(d) { return d.title; });
+            extra_sections.append('p').html(function(d) { return cited(d.text); });
 
             var downloads = div.append('p').attr('class', 'pad1');
-
             downloads.append('span').text('download: ');
-
             downloads.append('a')
-                .text(function(d) {
-                    return d.heading.identifier + '.json';
-                })
+                .text(function(d) { return d.heading.identifier + '.json'; })
                 .attr('href', function(d) {
                     return 'sections/' + d.heading.identifier + '.json';
                 });
-
         }).get();
-    }
-
-
-    function sectionClass(d) {
-        var c = '';
-        if (d.prefix.match(/([a-z])/)) c = 'section-1';
-        else if (d.prefix.match(/([0-9])/)) c = 'section-2';
-        else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
-        return c;
-    }
-
-    function doesNotApply(d) {
-        return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
     }
 
     function cited(text) {
@@ -259,11 +205,11 @@ d3.json('index.json').on('load', function(index) {
         return "<a href=\"" + url + "\">" + text + "</a>";
     }
 
-
-    function sectionsFor(title) {
-        d3.select('#sections').datum(index.sections.filter(function(s) {
-            return s[0].match(/(\d+)\-/)[1] == title[0];
-        })).call(browser.sections);
+    function listSections(t, d) {
+        d3.select('#sections').datum(d)
+            .call(browser.list, function(d) {
+                return '#/' + t + '/' + d[0];
+            });
     }
 
     function searchSection(s) {
@@ -280,14 +226,6 @@ d3.json('index.json').on('load', function(index) {
         d3.select('#code-identifier').text(title ? ('§ ' + title) : '');
     }
 
-    var s = search(),
-        combobox = d3.combobox();
-
-    var title_search = d3.select('#search-title')
-        .on('keyup', keyup)
-        .call(combobox)
-        .on('change', change);
-
     function keyup() {
         if (!this.value) return;
         if (this.value.match(/^(\d)\-/)) {
@@ -295,10 +233,7 @@ d3.json('index.json').on('load', function(index) {
         }
         s.autocomplete(this.value, function(results) {
             combobox.data(results.map(function(r) {
-                return {
-                    title: r,
-                    value: r
-                };
+                return { title: r, value: r };
             }));
         });
     }
@@ -320,19 +255,6 @@ d3.json('index.json').on('load', function(index) {
             })).call(browser.sections);
         });
     }
-
-    var routes = {
-        '#/:title': findTitle,
-        '#/:title/:section': findSection
-    };
-
-    router = Router(routes);
-    router.init();
-
-    d3.select(document)
-        .call(d3.keybinding('arrows')
-            .on('←', keyMove(-1))
-            .on('→', keyMove(1)));
 
     function keyMove(dir) {
         return function() {

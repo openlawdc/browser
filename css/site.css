@@ -22,7 +22,7 @@ a {
 }
 
 .header {
-    background: rgba(0,0,0,0.8);
+    background: #222;
     height: 50px;
     position: absolute;
     top: 0;
@@ -32,7 +32,7 @@ a {
 
 .header h1 {
     color: #fff;
-    font-size: 1.4em;
+    font-size: 25px;
     line-height: 50px;
     padding: 0 10px;
     text-transform: uppercase;
@@ -63,7 +63,7 @@ a {
     border: none;
     color: white;
     float: right;
-    font-size: 1.2em;
+    font-size: 20px;
     margin: 0;
     width:95%;
     height: 50px;
@@ -93,8 +93,7 @@ a {
     line-height: 35px;
     margin: 0;
     padding: 0;
-    position: fixed;
-    width: inherit;
+    width: 100%;
     z-index: 10;
 }
 
@@ -129,18 +128,9 @@ a {
     background-color: rgba(106,203,222,1);
 }
 
-ul.items {
-    margin-top: 34px;
-}
-
 ul.items li {
     border-top:1px solid #ccc;
     transition:background 50ms linear;
-}
-
-ul.items#titles li {
-    margin: 0;
-    position: relative;
 }
 
 ul li a {
@@ -212,10 +202,6 @@ ul.items li.clearfix {
     display: block;
 }
 
-ul#sections.items li {
-    padding: 10px;
-}
-
 .nav.selected ul.items li {
     opacity: 0.6;
 }
@@ -246,7 +232,6 @@ li.active .section-number {
 
 .content h1 {
     border-bottom:1px solid #ccc;
-    line-height: 1.4em;
     margin-bottom:0;
 }
 
