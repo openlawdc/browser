@@ -43,6 +43,10 @@ function sectionUrl(t) {
     return function(d) { return '#/' + t + '/' + d[0]; };
 }
 
+function sectionUrlPure(d) {
+    return '#/' + d[0].match(/^(\d+)/)[1] + '/' + d[0];
+}
+
 function sectionAsComplete(s) {
     var val = s[0] + ' ' + s[1];
     return { title: val, value: val, type: 'section' };
@@ -60,13 +64,14 @@ function focusSearch() {
 function keyMove(dir) {
     return function() {
         var sections = sections_div
-            .selectAll('li.section'), i = null;
+            .selectAll('li.title'), i = null;
         sections.each(function(_, ix) {
             if (d3.select(this).classed('active')) i = ix;
         });
         if (!(i === null || (dir === -1 && i === 0) ||
             (dir === 1 && i === sections[0].length - 1))) {
-            d3.select(sections[0][i + dir]).trigger('click');
+            d3.select(sections[0][i + dir]).select('a')
+                .trigger('click');
         }
     };
 }
@@ -218,8 +223,8 @@ d3.json('index.json').on('load', function(index) {
         s.query(this.value, function(d) {
             sections_div
                 .datum(d.map(function(o) {
-                return o.title;
-            })).call(browser.sections);
+                    return o.title;
+                })).call(browser.list, sectionUrlPure);
         });
     }
 }).get();
