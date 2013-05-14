@@ -173,7 +173,7 @@ d3.json('index.json').on('load', function(index) {
 
             var extras = [
                 { text: section.credits, title: 'Credits' },
-                { text: section.credits, title: 'Historical and Statutory' }];
+                { text: section.historical, title: 'Historical and Statutory' }];
             var extra_sections = div.selectAll('div.limited-text')
                 .data(extras.filter(function(e) { return e.text; }))
                 .enter().append('div').attr('class', 'pad2 limited-text');
