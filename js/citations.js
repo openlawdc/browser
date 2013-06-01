@@ -20,6 +20,12 @@ function cited(text) {
         return "<a href='" + url + "'>" + text + "</a>";
     }
 
+    function noted(note, text) {
+        note = note.replace(/\"/g, "&quot;");
+        return "<span class=\"modal note\" " +
+            "title=\"" + note + "\">" + text + "</span>";
+    }
+
     // The detected citation is a DC "Law" - a slip law number, assigned
     // to an act after it becomes law.
     //
@@ -35,43 +41,23 @@ function cited(text) {
         var prefixedLawNumber = cite.dc_law.period + "-" + zeroPrefix(cite.dc_law.number, 3);
 
         var billNumber = dc_laws[prefixedLawNumber];
-        if (!billNumber) // leave unlinked
-            return cite.match;
+
+        // we don't have bill numbers for periods < 15
+        if (!billNumber)
+            return noted("We can only link to DC laws from Council Period 15 onwards.", cite.match);
 
         var pieces = billNumber.split("-");
         billNumber = pieces[0] + "-" + zeroPrefix(pieces[1], 4);
+        console.log(billNumber);
 
         var text = "D.C. Law " + lawNumber;
         var url = "http://dcclims1.dccouncil.us/lims/legislation.aspx?LegNo=B" + billNumber;
         return linked(url, text);
     }
 
-    // what in Ruby would be:
-    // "0" * 5 => "00000"
-    function repeated(num, string) {
-        return new Array(num + 1).join(string);
-    }
-
-    // handles a max of 4
-    function zeroPrefix(number, zeroes) {
-        var toAdd;
-        if (number < 10)
-            toAdd = zeroes - 1;
-        else if (number < 100)
-            toAdd = zeroes - 2;
-        else if (number < 1000)
-            toAdd = zeroes - 3;
-        else
-            toAdd = zeroes - 4;
-
-        if (toAdd < 0) toAdd = 0;
-
-        return repeated(toAdd, "0") + number;
-    }
-
     function statCited(cite) {
         if (parseInt(cite.stat.volume, 10) < 65)
-            return;
+            return noted("We can only link to US statutes from 1951 (Vol 65) onwards.", cite.match);
 
         return linked('http://api.fdsys.gov/link?collection=statute&volume=' + cite.stat.volume + '&page=' + cite.stat.page,
             cite.match);
@@ -82,7 +68,7 @@ function cited(text) {
     function codeCited(cite) {
         var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
         if (index > 0 && index < 40) // found, and to the left of the cite
-            return;
+            return noted("We can only link to current versions of the DC Code (not the 1981 Edition).", cite.match);
 
         return linked("#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section,
             cite.match);
@@ -97,10 +83,36 @@ function cited(text) {
     // just link to that year's copy on the DC Register website
     function dcrCited(cite) {
         if (parseInt(cite.dc_register.volume, 10) < 57)
-            return;
+            return noted("We can only link to the DC Register from 2010 (Vol. 57) onwards.", cite.match);
 
         var year = parseInt(cite.dc_register.volume, 10) + 1953;
         return linked('http://www.dcregs.dc.gov/Gateway/IssueList.aspx?IssueYear=' + year,
             cite.match);
+    }
+
+    // utils
+
+    // what in Ruby would be:
+    // "0" * 5 => "00000"
+    function repeated(num, string) {
+        return new Array(num + 1).join(string);
+    }
+
+    // handles a max of 4
+    function zeroPrefix(number, zeroes) {
+
+        var toAdd;
+        if (number < 10)
+            toAdd = zeroes - 1;
+        else if (number < 100)
+            toAdd = zeroes - 2;
+        else if (number < 1000)
+            toAdd = zeroes - 3;
+        else
+            toAdd = zeroes - 4;
+
+        if (toAdd < 0) toAdd = 0;
+
+        return repeated(toAdd, "0") + number;
     }
 }

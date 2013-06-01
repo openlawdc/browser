@@ -331,3 +331,7 @@ div.combobox {
 .combobox-carat {
     display: none;
 }
+
+span.note.modal {
+    border-bottom: 1px dashed #666;
+}
