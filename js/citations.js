@@ -5,7 +5,7 @@ function cited(text) {
                 source: 'dc_code'
             }
         },
-        excerpt: 40,
+        excerpt: 15,
         types: ['dc_code', 'dc_register', 'dc_law', 'law', 'stat'],
         replace: {
             dc_code: codeCited,
@@ -66,9 +66,9 @@ function cited(text) {
     // is this a current DC Code cite (something we should cross-link),
     // or is it to a prior version of the DC Code?
     function codeCited(cite) {
-        var index = cite.excerpt.search(/ior\s+codifications\s+1981\s+Ed\.?\,?/i);
-        if (index > 0 && index < 40) // found, and to the left of the cite
-            return noted("We can only link to current versions of the DC Code (not the 1981 Edition).", cite.match);
+        var match = /(1981|1973)\s+Ed\.?\,?/i.exec(cite.excerpt);
+        if (match && match.index > 0 && match.index < 15) // found, and to the left of the cite
+            return noted("We can only link to current versions of the DC Code (not the " + match[1] + " Edition).", cite.match);
 
         return linked("#/" + cite.dc_code.title + "/" + cite.dc_code.title + "-" + cite.dc_code.section,
             cite.match);
