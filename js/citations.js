@@ -33,8 +33,6 @@ function cited(text) {
     function dcLawCited(cite) {
         var lawNumber = cite.dc_law.period + "-" + cite.dc_law.number;
         var prefixedLawNumber = cite.dc_law.period + "-" + zeroPrefix(cite.dc_law.number, 3);
-        console.log("lawNumber: " + lawNumber);
-        console.log("prefixedLawNumber: " + prefixedLawNumber);
 
         var billNumber = dc_laws[prefixedLawNumber];
         if (!billNumber) // leave unlinked
