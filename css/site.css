@@ -254,6 +254,14 @@ section .section-prefix {
     color:#777;
 }
 
+section .section-prefix:before {
+    content:"(";
+}
+
+section .section-prefix:after {
+    content:")";
+}
+
 .limited-text {
     border-top:1px solid #ccc;
     background:#eee;
