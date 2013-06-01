@@ -100,6 +100,7 @@ function cited(text) {
 
     // handles a max of 4
     function zeroPrefix(number, zeroes) {
+        number = parseInt(number); // strip off any existing leading zeroes
 
         var toAdd;
         if (number < 10)
