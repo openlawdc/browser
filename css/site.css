@@ -240,12 +240,24 @@ section {
     padding:10px 5px;
 }
 
+section.section-1 {
+    margin-left:2em;
+}
+
 section.section-2 {
-    margin-left:10px;
+    margin-left:4em;
 }
 
 section.section-3 {
-    margin-left:20px;
+    margin-left:6em;
+}
+
+section.section-4 {
+    margin-left:8em;
+}
+
+section.section-5 {
+    margin-left:10em;
 }
 
 section .section-prefix {

@@ -33,7 +33,11 @@ function doesNotApply(d) {
 
 function sectionClass(d) {
     var c = '';
-    if (d.prefix.match(/([a-z])/)) c = 'section-1';
+    // Really need context (at least the previous prefix to know whether
+    // i is a lowercase letter or a lowercase roman numeral.
+    if (d.prefix.match(/^[ivx]+$/)) c = 'section-4';
+    else if (d.prefix.match(/^[IVX]+$/)) c = 'section-5';
+    else if (d.prefix.match(/([a-z])/)) c = 'section-1';
     else if (d.prefix.match(/([0-9])/)) c = 'section-2';
     else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
     return c;
