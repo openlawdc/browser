@@ -32,8 +32,18 @@ function doesNotApply(d) {
 }
 
 function sectionClass(d) {
-    var c = '';
-    if (d.prefix.match(/([a-z])/)) c = 'section-1';
+    var c = '',
+        prevPrefix = this.previousSibling ?
+            d3.select(this.previousSibling).datum().prefix : null;
+    // Look at previous prefix to know whether i is a lowercase letter or
+    // a lowercase roman numeral.
+    if (d.prefix.match(/^[ivx]+$/) && (d.prefix != 'i' || prevPrefix != 'h')) {
+        c = 'section-4';
+    }
+    else if (d.prefix.match(/^[IVX]+$/) && (d.prefix != 'I' || prevPrefix != 'H')) {
+        c = 'section-5';
+    }
+    else if (d.prefix.match(/([a-z])/)) c = 'section-1';
     else if (d.prefix.match(/([0-9])/)) c = 'section-2';
     else if (d.prefix.match(/([A-Z])/)) c = 'section-3';
     return c;
@@ -180,7 +190,7 @@ d3.json('index.json').on('load', function(index) {
             extra_sections.append('h4').text(function(d) { return d.title; });
             extra_sections.append('p').html(function(d) { return cited(d.text); });
 
-            var downloads = div.append('p').attr('class', 'pad1');
+            var downloads = div.append('div').attr('class', 'pad21h download no-print');
             downloads.append('span').text('download: ');
             downloads.append('a')
                 .text(function(d) { return d.heading.identifier + '.json'; })

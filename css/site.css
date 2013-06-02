@@ -82,7 +82,8 @@ a {
 .nav {
     border-right:1px solid #ccc;
     height:100%;
-    overflow:auto;
+    overflow-y:auto;
+    overflow-x:hidden;
 }
 
 .nav h2 {
@@ -240,12 +241,24 @@ section {
     padding:10px 5px;
 }
 
+section.section-1 {
+    margin-left:2em;
+}
+
 section.section-2 {
-    margin-left:10px;
+    margin-left:4em;
 }
 
 section.section-3 {
-    margin-left:20px;
+    margin-left:6em;
+}
+
+section.section-4 {
+    margin-left:8em;
+}
+
+section.section-5 {
+    margin-left:10em;
 }
 
 section .section-prefix {
@@ -254,10 +267,29 @@ section .section-prefix {
     color:#777;
 }
 
+section .section-prefix:before {
+    content:"(";
+}
+
+section .section-prefix:after {
+    content:")";
+}
+
 .limited-text {
     border-top:1px solid #ccc;
     background:#eee;
     color: #666;
+}
+
+.download {
+    border-top:1px solid #ccc;
+    padding-left: 20px;
+    color: #777;
+}
+
+.download span {
+    background: url(../img/download.svg) 0 0 no-repeat;
+    padding-left: 24px;
 }
 
 .pad1.small-top {
@@ -322,4 +354,8 @@ div.combobox {
 
 .combobox-carat {
     display: none;
+}
+
+span.note.modal {
+    border-bottom: 1px dashed #666;
 }
