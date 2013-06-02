@@ -48,7 +48,6 @@ function cited(text) {
 
         var pieces = billNumber.split("-");
         billNumber = pieces[0] + "-" + zeroPrefix(pieces[1], 4);
-        console.log(billNumber);
 
         var text = "D.C. Law " + lawNumber;
         var url = "http://dcclims1.dccouncil.us/lims/legislation.aspx?LegNo=B" + billNumber;
