@@ -280,6 +280,17 @@ section .section-prefix:after {
     color: #666;
 }
 
+.download {
+    border-top:1px solid #ccc;
+    padding-left: 20px;
+    color: #777;
+}
+
+.download span {
+    background: url(../img/download.svg) 0 0 no-repeat;
+    padding-left: 24px;
+}
+
 .pad1.small-top {
     padding-top:0;
     border-bottom:1px solid #eee;
