@@ -190,7 +190,7 @@ d3.json('index.json').on('load', function(index) {
             extra_sections.append('h4').text(function(d) { return d.title; });
             extra_sections.append('p').html(function(d) { return cited(d.text); });
 
-            var downloads = div.append('p').attr('class', 'pad1');
+            var downloads = div.append('div').attr('class', 'pad21h download no-print');
             downloads.append('span').text('download: ');
             downloads.append('a')
                 .text(function(d) { return d.heading.identifier + '.json'; })
