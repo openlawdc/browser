@@ -82,7 +82,8 @@ a {
 .nav {
     border-right:1px solid #ccc;
     height:100%;
-    overflow:auto;
+    overflow-y:auto;
+    overflow-x:hidden;
 }
 
 .nav h2 {
