@@ -30,7 +30,7 @@ function cited(text) {
     // to an act after it becomes law.
     //
     // However, DC's legislative portal, LIMS, does not know law numbers,
-    // only act numbers. @vdavez and @adamturoff created a crosswalk between
+    // only act numbers. @vdavez and @aturoff created a crosswalk between
     // the two.
     //
     // The crosswalk is a JSON object, loaded into the global namespace as "dc_laws".
@@ -38,19 +38,22 @@ function cited(text) {
     // the user to the act which became the cited law.
     function dcLawCited(cite) {
         var lawNumber = cite.dc_law.period + "-" + cite.dc_law.number;
-        var prefixedLawNumber = cite.dc_law.period + "-" + zeroPrefix(cite.dc_law.number, 3);
+        var prefixedLawNumber = "L" + cite.dc_law.period + "-" + zeroPrefix(cite.dc_law.number, 4);
 
+        console.log("looking up: " + prefixedLawNumber);
         var billNumber = dc_laws[prefixedLawNumber];
+
+        if (!billNumber) console.log("Faile :(");
 
         // we don't have bill numbers for periods < 15
         if (!billNumber)
-            return noted("We can only link to DC laws from Council Period 15 onwards.", cite.match);
+            return noted("We can only link to DC laws from Council Period 8 onwards.", cite.match);
 
         var pieces = billNumber.split("-");
         billNumber = pieces[0] + "-" + zeroPrefix(pieces[1], 4);
 
         var text = "D.C. Law " + lawNumber;
-        var url = "http://dcclims1.dccouncil.us/lims/legislation.aspx?LegNo=B" + billNumber;
+        var url = "http://dcclims1.dccouncil.us/lims/legislation.aspx?LegNo=" + billNumber;
         return linked(url, text);
     }
 
