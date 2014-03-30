@@ -12,9 +12,27 @@ a {
     color: rgba(42,65,150,1);
 }
 
+.notice {
+    position:absolute;
+    top:0;
+    height:100px;
+    text-align:center;
+    line-height:100px;
+    font-size:30px;
+    right:0;
+    left:0;
+    bottom:0px;
+    overflow: hidden;
+    background:#FFF5C0;
+}
+
+.notice a {
+    text-decoration:underline;
+}
+
 .restrict {
     position:absolute;
-    top:50px;
+    top:150px;
     right:0;
     left:0;
     bottom:0px;
@@ -25,7 +43,7 @@ a {
     background: #222;
     height: 50px;
     position: absolute;
-    top: 0;
+    top: 100px;
     left: 0;
     right: 0;
 }
